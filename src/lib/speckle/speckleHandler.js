@@ -1,7 +1,7 @@
 import { ViewerEvent } from "@speckle/viewer";
 import { getStreamCommits, getUserData } from "./speckleUtils.js";
 import { get } from "svelte/store";
-import { speckleViewer, finishLoading, speckleStream, speckleDatatree, viewerLotes } from "../../stores/toolStore";
+import { speckleViewer, finishLoading, speckleStream, speckleDatatree, speckleDeptos  } from "../../stores/toolStore";
 import { buildViewerData } from '$lib/speckle/viewerBuilder';
 import { json } from "@sveltejs/kit";
 const token = import.meta.env.VITE_SPECKLE_TOCKEN;
@@ -67,60 +67,60 @@ export async function filterByPromptConditions(categoryName, propertyName, prope
   //console.log(selectedCategoryElements, "selectedCategoryElements");
 
 };
-function promptParameterExtractorEmplazamiento(propertyName, propertyValue, condition) {
-  //iterate over speckledataThreeCategory and get the elements that match the condition speckle.data.definition
-  //this is too slow will need to refactor later speed important
-  const lotes =  get(viewerLotes)
-  let matchElementIds = [];
-  lotes.forEach((element) => {
-    for (const [key, value] of Object.entries(element)) {
-      //console.log(key, value, "key and value");
-      if (key === propertyName) {
-        //console.log(key, value, "key and value");
-        //check if the condition is met
-        //we are force to add possible condition for the bot answers since its not trained on this pattern 
-        if (condition === "equal" || condition === "equals" ) {
-          if (value === propertyValue) {
-            matchElementIds.push(element.id);
-            console.log("condition met", element);
-          }
-        }
-        else if (condition === "contains" || condition === "includes" ) {
-          //console.log(value, propertyValue, "value and property value.........");
-          if (value.includes(propertyValue)) {
-            matchElementIds.push(element.id);
-            console.log("condition met", element);
-          }
-        }
-        else if (condition === "greater") {
-          if (value > propertyValue) {
-            console.log("condition met");
-          }
-        }
-        else if (condition === "less") {
-          if (value < propertyValue) {
-            console.log("condition met");
-          }
-        }
-        else if (condition === "greaterOrEqual") {
-          if (value >= propertyValue) {
-            console.log("condition met");
-          }
-        }
-        else if (condition === "lessOrEqual") {
-          if (value <= propertyValue) {
-            console.log("condition met");
-          }
-        }
-      }
-    }
-    //console.log(matchElementIds, "elementProperties.......");
-  });
-  console.log(matchElementIds, "matchElementIds.......");
-  colorById(matchElementIds, 0x8bc34a);
-  return matchElementIds;
-  //console.log(matchElementIds, "matchElementIds.......");
-}
+// function promptParameterExtractorEmplazamiento(propertyName, propertyValue, condition) {
+//   //iterate over speckledataThreeCategory and get the elements that match the condition speckle.data.definition
+//   //this is too slow will need to refactor later speed important
+//   const lotes =  get(viewerLotes)
+//   let matchElementIds = [];
+//   lotes.forEach((element) => {
+//     for (const [key, value] of Object.entries(element)) {
+//       //console.log(key, value, "key and value");
+//       if (key === propertyName) {
+//         //console.log(key, value, "key and value");
+//         //check if the condition is met
+//         //we are force to add possible condition for the bot answers since its not trained on this pattern 
+//         if (condition === "equal" || condition === "equals" ) {
+//           if (value === propertyValue) {
+//             matchElementIds.push(element.id);
+//             console.log("condition met", element);
+//           }
+//         }
+//         else if (condition === "contains" || condition === "includes" ) {
+//           //console.log(value, propertyValue, "value and property value.........");
+//           if (value.includes(propertyValue)) {
+//             matchElementIds.push(element.id);
+//             console.log("condition met", element);
+//           }
+//         }
+//         else if (condition === "greater") {
+//           if (value > propertyValue) {
+//             console.log("condition met");
+//           }
+//         }
+//         else if (condition === "less") {
+//           if (value < propertyValue) {
+//             console.log("condition met");
+//           }
+//         }
+//         else if (condition === "greaterOrEqual") {
+//           if (value >= propertyValue) {
+//             console.log("condition met");
+//           }
+//         }
+//         else if (condition === "lessOrEqual") {
+//           if (value <= propertyValue) {
+//             console.log("condition met");
+//           }
+//         }
+//       }
+//     }
+//     //console.log(matchElementIds, "elementProperties.......");
+//   });
+//   console.log(matchElementIds, "matchElementIds.......");
+//   colorById(matchElementIds, 0x8bc34a);
+//   return matchElementIds;
+//   //console.log(matchElementIds, "matchElementIds.......");
+// }
 
 //function to deconstruct speckle object and return custom object with properties of interest
 //custom per use case. 

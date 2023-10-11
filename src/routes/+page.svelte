@@ -7,26 +7,18 @@
 	import {
 		speckleStream,
 		speckleViewer,
-		currentSelection,
 		speckleDatatree,
 		finishLoading,
-		speckleParqueLotes,
-		viewerProtos,
-		viewerLotes,
+		viewerDeptos,
 		sidebar_show,
-		currentLote,
-		currentProto, 
-		parkOperationCalendarID,
-		socketIoUrl,
+		currentDepto,
+		currentViewerDepto,
 	} from '../stores/toolStore';
-	import {fetchGoogleCalendarByID} from "$lib/components/google/googleCalendar.js";
 	import UtilityBar from '$lib/components/modelViewer/UtilityBar.svelte';
 	import DonoutKpiChart from '$lib/components/charts/DonoutKpiChart.svelte';
 	import Sidebar from '$lib/components/sidebarModal/Sidebar.svelte';
 	import { Circle2 } from 'svelte-loading-spinners';
 	import { navigating } from '$app/stores';
-	import GoogleCalendarInfoContainer from '$lib/components/googleComponents/GoogleCalendarInfoContainer.svelte';
-	import { io } from 'socket.io-client';
 	export let data;
 
 	let speckleStramToPass = '';
@@ -35,55 +27,34 @@
 	let _sidebar_show = get(sidebar_show);
 	let selectedElement = [];
 	let _viewerLotes = [];
-	const _calendarID= get(parkOperationCalendarID);
 	
-	//socket to change stream dynamically
-	const socket = io(get(socketIoUrl));
-	socket.on('dataUpdated', (message) => {
-		console.log(message.speckleUrl, 'data updated from socket');
-		speckleStream.set(message.speckleUrl);
-		reloadViewer();
-		
-
-	});
 
 
 	//implement onMount function
 	onMount(async () => {
-		//load calendar data 
-		fetchGoogleCalendarByID(_calendarID);
 		//handle sidebar show and hide
-		currentSelection.subscribe((v) => {
+		currentViewerDepto.subscribe((v) => {
 			selectedElement = v;
-			const viewerProtosData = get(viewerProtos);
-			const viewerLotesData = get(viewerLotes);
+			const viewerDeptosData = get(viewerDeptos);
 
 			if (selectedElement && selectedElement.length > 0) {
-				const viewerProtosDataIds = viewerProtosData.map((item) => item.id);
-				const viewerLotesDataIds = viewerLotesData.map((item) => item.id);
-				const viewerDataIds = [...viewerProtosDataIds, ...viewerLotesDataIds];
+				const viewerDeptosDataIds = viewerDeptosData.map((item) => item.id);
+				const viewerDataIds = [...viewerDeptosDataIds];
 				//console.log(viewerDataIds.includes(selectedElement[0]?.id), viewerDataIds)
 				if (viewerDataIds.includes(selectedElement[0]?.id)) {
-					console.log('found showing sidebar', selectedElement[0]?.id);
+					//console.log('found showing sidebar', selectedElement[0]?.id);
 					_sidebar_show = true;
-					const selectedProto = viewerProtosData.find((item) => item.id === selectedElement[0]?.id);
-					const selectedLote = viewerLotesData.find((item) => item.id === selectedElement[0]?.id);
-					//console.log(selectedProto, selectedLote,"========");
-					if (selectedProto) {
-						currentProto.set(selectedProto);
-					} else if (selectedLote) {
-						currentLote.set(selectedLote);
-					}
+					const selectedDepto = viewerDeptosData.find((item) => item.id === selectedElement[0]?.id);
+					console.log(_sidebar_show,"========",selectedDepto);
+					currentDepto.set(selectedDepto);
 				} else {
 					//console.log('not found hiding sidebar');
 					_sidebar_show = false;
-					currentLote.set(null);
-					currentProto.set(null);
+					currentDepto.set(null);
 				}
 			} else {
 				_sidebar_show = false;
-				currentLote.set(null);
-				currentProto.set(null);
+				currentDepto.set(null);
 			}
 		});
 
@@ -112,8 +83,7 @@
 
 {#if loadCompleted}
 	<UtilityBar />
-	<!-- <GoogleCalendarInfoContainer /> -->
-	<DonoutKpiChart dataProp={'Estado'} tittle="Disponibilidad:" />
+	<DonoutKpiChart dataProp={'Torre'} tittle="Deptos Por Torre:" />
 	<Sidebar bind:show={_sidebar_show} />
 {:else}
 

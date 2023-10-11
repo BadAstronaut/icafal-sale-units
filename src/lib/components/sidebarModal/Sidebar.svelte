@@ -5,15 +5,11 @@
 	import { reloadViewer } from '$lib/speckle/speckleHandler';
 	import {
 		finishLoading,
-		viewerProtos,
-		viewerLotes,
 		speckleViewer,
+		viewerDeptos,
 		sidebar_show,
-		currentSelection,
-		currentLote,
-		currentProto,
-		servicesSelected,
-		servicesAvailable,
+		currentDepto,
+		disponibilitySelected,
 		colorValueDisponibility,
 		chatMessages
 	} from '/src/stores/toolStore';
@@ -25,43 +21,23 @@
 	import SideBarRow from './SideBarRow.svelte';
 	import MultiSelect from './MultiSelect.svelte';
 	import ChatUi from '../gptChat/ChatUi.svelte';
+	import ImageViewer from './ImageViewer.svelte';
 
 	export let show = false;
 	let modal_show = false;
-	let proto = get(currentProto);
-	let lote = get(currentLote);
+	let depto = get(currentDepto);
+	console.log('depto', depto);
 	let filterService = false;
-	let _servicesSelected = $servicesSelected;
+	let _disponibilitySelected = $disponibilitySelected;
 	let chatUi = $chatMessages;
 
-	currentLote.subscribe((v) => {
-		if (v) {
-			lote = v;
-			//console.log('-------', lote);
-			proto = null;
-		}
+ //onmount function
+ onMount(() => {
+	//console.log('viewer dynamic update' , speckleStreams[idUpdate]);
+	currentDepto.subscribe((v) => {
+		depto = v;
 	});
-	currentProto.subscribe((v) => {
-		if (v) {
-			const loteId = v?.LoteID;
-			//get lote with teh same loteId
-			const _lote = get(viewerLotes).find((item) => item.LoteID === loteId);
-			const lote = _lote ? _lote : null;
-			console.log('-------', lote);
-			proto = v;
-		}
-	});
-
-	servicesSelected.subscribe((v) => {
-		//console.log('service selected change', v,_servicesSelected);
-		//check if the array is empty
-		if (v.length != 0) {
-			filterService = true;
-		} else {
-			filterService = false;
-			//console.log('filterService hidden', v);
-		}
-	});
+ });
 
 	function truncateString(str, maxLength) {
 		let truncatedString = '';
@@ -78,68 +54,50 @@
 		return truncatedString;
 	}
 	//here we will write the function that filters the viewer elements based on containing a service or not
-	function viewerFilterByServices(selectedArray) {
-		const selectedArrayKeys = Object.keys(selectedArray);
-		const colors = get(colorValueDisponibility);
-		const activeV = get(speckleViewer).speckleViewer;
-		const _viewerLotes = get(viewerLotes);
-		if (selectedArrayKeys.length != 0 && get(finishLoading)) {
-			//for each _viewerLotes we need to check Servicios prop and see which of the selected filters are in the array if they are all present select it if not pass it
-			const filteredLotes = _viewerLotes.filter((lote) => {
-				const hasSelectedServices = selectedArrayKeys.every((selectedService) => {
-					return lote.Servicios.includes(selectedService);
-				});
-				//console.log('hasSelectedServices',hasSelectedServices);
-				return hasSelectedServices;
-			});
-			//get the array of ids from the filteredLotes
-			const filteredLotesIds = filteredLotes.map((lote) => lote.id);
-			const dispQueryObject = {
-				objectIds: filteredLotesIds,
-				color: colors.Disponible
-			};
-			activeV.setUserObjectColors([dispQueryObject])
-			//console.log('viewerLotes', filteredLotesIds);
-		}
-		else{
-			resetViewerFilters();
-		}
-	}
+	// function viewerFilterByServices(selectedArray) {
+	// 	const selectedArrayKeys = Object.keys(selectedArray);
+	// 	const colors = get(colorValueDisponibility);
+	// 	const activeV = get(speckleViewer).speckleViewer;
+	// 	const _viewerLotes = get(viewerDeptos);
+	// 	if (selectedArrayKeys.length != 0 && get(finishLoading)) {
+	// 		//for each _viewerLotes we need to check Servicios prop and see which of the selected filters are in the array if they are all present select it if not pass it
+	// 		const filteredLotes = _viewerLotes.filter((lote) => {
+	// 			const hasSelectedServices = selectedArrayKeys.every((selectedService) => {
+	// 				return lote.Servicios.includes(selectedService);
+	// 			});
+	// 			//console.log('hasSelectedServices',hasSelectedServices);
+	// 			return hasSelectedServices;
+	// 		});
+	// 		//get the array of ids from the filteredLotes
+	// 		const filteredLotesIds = filteredLotes.map((lote) => lote.id);
+	// 		const dispQueryObject = {
+	// 			objectIds: filteredLotesIds,
+	// 			color: colors.Disponible
+	// 		};
+	// 		activeV.setUserObjectColors([dispQueryObject])
+	// 		//console.log('viewerLotes', filteredLotesIds);
+	// 	}
+	// 	else{
+	// 		resetViewerFilters();
+	// 	}
+	// }
 </script>
 
 {#if show}
 	<nav class="side-bar" transition:fly={{ x: 250, opacity: 1 }}>
-		{#if filterService}
-			<span>Filtro por Servicio:</span>
-			<div class="side-service-filter">
-				<MultiSelect id="lang" onChange={(selectedArray) => viewerFilterByServices(selectedArray)}>
-					{#each get(servicesAvailable) as service}
-						<option value={service}>{service}</option>
-					{/each}
-				</MultiSelect>
-			</div>
-		{/if}
-		{#if lote}
-			<span>Info Lote: {lote.LoteID}</span>
-			<ol class="side-container">
-				{#each Object.entries(lote) as [propName, propValue]}
-					<SideBarRow {propName} {propValue} />
-				{/each}
-			</ol>
-		{/if}
-
-		{#if proto}
-			<span>Info Proto: {proto.Nombre}</span>
+		{#if depto}
+			<span>Info Proto: {depto.NumDepto}</span>
 			<div class="side-container">
-				{#each Object.entries(proto) as [propName, propValue]}
+				{#each Object.entries(depto) as [propName, propValue]}
 					<SideBarRow {propName} {propValue} />
 				{/each}
 			</div>
+			<ImageViewer src="/departamentos/plantas/2D2B.jpg" />
 		{/if}
-		{#if chatUi}
+		<!-- {#if chatUi}
 			<span>GPT Chat:</span>
 			<ChatUi />
-		{/if}
+		{/if} -->
 	</nav>
 {/if}
 
@@ -151,19 +109,9 @@
 		border: 1px solid rgba(0, 0, 0, 0.1);
 		border-radius: 5px;
 		padding: 1rem;
+		padding-left: 0;
+		margin: 0%;
 		padding-bottom: 2rem;
-		justify-content: flex-start;
-		gap: 5px;
-		height: auto;
-		width: 100%;
-	}
-	.side-service-filter {
-		display: flex;
-		flex-direction: column;
-		align-items: start;
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		border-radius: 5px;
-		padding: 10px;
 		justify-content: flex-start;
 		gap: 5px;
 		height: auto;

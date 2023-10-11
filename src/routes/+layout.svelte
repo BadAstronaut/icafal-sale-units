@@ -4,10 +4,10 @@
 
 <nav class="layout">
 	<!-- add logoCTEC as a a logo in the top left corner of the nav bar -->
-	<img class="logo" src="/logoCTEC.png" alt="logoCTEC" width="auto" height="auto" />
+	<img class="logo" src="/logoICAFAL.png" alt="logo Icafal" width="auto" height="auto" />
 	<div class="head-title">
-		<h1 class="title">Parque Tecnológico Laguna Caren</h1>
-		<h2 class="coord">33°26'12.2"S, 70°50'20.0"W</h2>
+		<h1 class="title">Unidades Vendibles ICAFAL</h1>
+		<h2 class="coord">Proyecto: Clarck</h2>
 	</div>
 	<!-- <a data-sveltekit-preload-data="tap" href="/">Mod Habitar</a> Laguna Caren 33°26'12.2"S 70°50'20.0"W Pudahuel, 9020000, Región Metropolitana
   <a data-sveltekit-preload-data="tap" href="/viviendas/vivienda-1">Vivienda 1</a>

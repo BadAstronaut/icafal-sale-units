@@ -1,7 +1,7 @@
 import { ViewerEvent } from "@speckle/viewer";
 import { getStreamCommits, getUserData } from "./speckleUtils.js";
 import { get } from "svelte/store";
-import { speckleViewer, finishLoading, speckleStream, speckleDatatree, lotesProps, protosProps, speckleParqueLotes, speckleParqueProtos, viewerLotes, viewerProtos } from "../../stores/toolStore";
+import { speckleViewer, finishLoading, speckleStream, speckleDatatree, deptosProps, speckleDeptos, catOfInterest, viewerDeptos } from "../../stores/toolStore";
 import {
     getPropertiesByTypeParameter,
     filterByCategoryNames
@@ -18,32 +18,23 @@ export async function buildViewerData() {
 }
 //this function builds the speckle base objects in the scene (lotes and protos)
 function setSpeckleObjects(speckleDT){
-    const propsToQuery = get(lotesProps)
-    const catNames = ["Emplazamiento", "Site"]
-    const protoCatNames = ["Masa", "Mass"]
-    const siteCats = filterByCategoryNames(speckleDT,catNames)
-    const protoCats = filterByCategoryNames(speckleDT,protoCatNames)
-    speckleParqueLotes.set(siteCats)
-    speckleParqueProtos.set(protoCats)
+    const propsToQuery = get(deptosProps)
+    const catNames = get(catOfInterest);
+    const deptosCat = filterByCategoryNames(speckleDT,catNames)
+    //console.log("deptosCat.....",deptosCat)
+    speckleDeptos.set(deptosCat)
 }
 
 function getViewerObjects(){
-    const loteParams = get(lotesProps)
-    const protoParams = get(protosProps)
-    const speckleLote = get(speckleParqueLotes)
-    const speckleProto = get(speckleParqueProtos)
-
-    const loteViewerObjects = extractParamData(speckleLote, loteParams, "Lote")
-    const protoViewerObjects = extractParamData(speckleProto, protoParams, "Proto")
-    
-    viewerLotes.set(loteViewerObjects)
-    viewerProtos.set(protoViewerObjects)
-    //console.log("loteViewerObjects",loteViewerObjects)
+    const deptoParams = get(deptosProps)
+    const _speckleDeptos = get(speckleDeptos)
+    const deptoViewerObjects = extractParamData(_speckleDeptos, deptoParams, "Depto")
+    viewerDeptos.set(deptoViewerObjects)
+    console.log("viewerDeptosBuilder............",deptoViewerObjects)
 }
 
 function extractParamData(speckleObjects, params, type){
     const paramData = []
-
     speckleObjects.forEach(obj => {
         //clone viewerObj
         const props = obj.parameters
@@ -51,22 +42,16 @@ function extractParamData(speckleObjects, params, type){
         _viewerObj.id = obj.id
         _viewerObj.category = obj.category
         _viewerObj.tipo = type
-        //console.log("====obj",obj.parameters["Area"])
+        //console.log("====obj",obj)
+        if (props) {
         params.forEach(param => {
             //console.log("====prop",prop)
-            if(props[param]){
-                _viewerObj[param] = props[param].value
+            if(props[param.propId]){
+                _viewerObj[param.propName] = props[param.propId].value
             
             }})
-        if(type === "Lote"){
-            //console.log("lot]]]]]]]]]]]]]e",obj)
-            _viewerObj.LoteID = obj.definition.type
-        }
-        else if(type === "Proto"){
-           
-        }
         paramData.push(_viewerObj)
+        }
     })
-
     return paramData
 }

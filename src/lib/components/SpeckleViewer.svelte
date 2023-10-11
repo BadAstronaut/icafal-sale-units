@@ -8,21 +8,21 @@
 		fetchUserData,
 		reloadViewerGetObjectsByIds,
 		handleBeaconOrigin,
-		reloadViewer
+		reloadViewer,
+		changeElementColorByIds, 
 	} from '$lib/speckle/speckleHandler';
 	
 	import {
 		speckleViewer,
 		speckleStream,
 		finishLoading,
-		currentSelection,
 		speckleDatatree,
-		currentLote,
-		currentProto,
+		currentDepto,
 		sidebar_show,
-		servicesSelected
+		disponibilitySelected,
+		currentViewerDepto
 	} from '../../stores/toolStore';
-
+	import FloatingModal from './FloatingModal.svelte';
 	export let _speckleStream;
 	//const speckleViewer = toolStore.speckleViewer
 	console.log(speckleStream, "from viwer updated.......")
@@ -48,17 +48,18 @@
 				//this changed not sure why  args.userData.id
 				const clieckedElement = args.hits[0].object;
 				v.selectObjects([clieckedElement.id]);
+				v.isolateObjects([clieckedElement.id]);
+				currentViewerDepto.set([clieckedElement]);
 
+				//changeElementColorByIds([clieckedElement.id], 0xff0000, true);
 				// @ts-ignore
-				currentSelection.set([clieckedElement]);
 				console.log(clieckedElement, 'clicked!');
 			} else {
 				v.resetSelection();
 				// @ts-ignore
-				currentSelection.set([]);
-				currentLote.set(null);
-				currentProto.set(null);
-				servicesSelected.set([]);
+				currentViewerDepto.set([]);
+				currentDepto.set([]);
+				disponibilitySelected.set([]);
 			}
 			//console.log(v.needsRender);
 		});
@@ -147,7 +148,7 @@
 		
 	});
 </script>
-
+<FloatingModal>	</FloatingModal>
 <div bind:this={viewerVal} class="viewer" />
 
 <style>

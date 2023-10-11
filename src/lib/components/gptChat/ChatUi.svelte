@@ -12,7 +12,7 @@
 		faEnvelope,
 		faL
 	} from '@fortawesome/free-solid-svg-icons';
-	import { chatMessages, viewerLotes, colorValueDisponibility } from '/src/stores/toolStore.js';
+	import { chatMessages, colorValueDisponibility, viewerDeptos } from '/src/stores/toolStore.js';
 	import { loader } from './loader.js';
 	import { colorById, lookTopView } from '$lib/speckle/speckleHandler.js';
 	import {functionOrchestrator} from '$lib/ai/functionCalls.js';
@@ -62,7 +62,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ lotes: $viewerLotes, messages: $chatMessages })
+			body: JSON.stringify({ lotes: $viewerDeptos, messages: $chatMessages })
 		})
 			.then((response) => response.json())
 			.then((data) => {

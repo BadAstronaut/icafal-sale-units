@@ -5,12 +5,10 @@
 	import {
 		activeIoTIndicators,
 		speckleViewer,
-		finishLoading,
-		viewerLotes,
-		speckleParqueLotes,
+		speckleDeptos,
 		colorValueDisponibility,
 		sidebar_show,
-		servicesSelected,
+		disponibilitySelected,
 		currentSelection,
 		chatMessages
 	} from '/src/stores/toolStore.js';

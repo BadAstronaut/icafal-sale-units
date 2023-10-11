@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { Chart, registerables } from 'chart.js';
 	import { changeElementColorByIds } from '$lib/speckle/speckleHandler.js';
-	import { colorValueDisponibility, viewerLotes } from '/src/stores/toolStore.js';
+	import { colorValueDisponibility, viewerDeptos } from '/src/stores/toolStore.js';
 	Chart.register(...registerables);
 
 	export let dataProp;
@@ -21,7 +21,7 @@
 	//create a function to process the
 	//this is the only way to update the chart, if we subscribe to the parent level
 	//the value is not updated in the component
-	viewerLotes.subscribe((v) => {
+	viewerDeptos.subscribe((v) => {
 		//console.log('from the store', v);
 		dataList = v;
 		const chartData = getChartArray();
@@ -32,8 +32,8 @@
 				chartValues.push(item.value);
 			});
 			//get the value of the chartData object that has label disponible
-			let disponibleIndex = chartData.findIndex((obj) => obj.label === 'Disponible');
-			disponibleValue = chartData[disponibleIndex].value;
+			// let disponibleIndex = chartData.findIndex((obj) => obj.label === 'Disponible');
+			// disponibleValue = chartData[disponibleIndex].value;
 
 			//console.log(chartLabels, chartValues, 'charting .... ');
 			if (chart) {
@@ -50,7 +50,7 @@
 				labels: chartLabels,
 				datasets: [
 					{
-						label: 'Estado',
+						label: "Num. Deptos",
 						backgroundColor: [
 							'rgba(111,192,102,0.6)',
 							'rgba(192,102,111,0.6)',
@@ -98,13 +98,15 @@
 		//console.log('dataList', dataList);
 		if (dataList && dataList.length > 0) {
 			dataList.forEach((item) => {
-				//console.log("item", item);
+				//console.log("item", dataProp);
 				if (item[dataProp] != null) {
 					//check if the value item[dataProp]  is in any of the objects in chartArray
 					let index = chartArray.findIndex((obj) => obj.label === item[dataProp]);
 					if (index === -1) {
 						//if not, create a new object and push it to the array
-						chartUi.label = item[dataProp];
+						//concatenate dataProp and item[dataProp] to create the label
+						chartUi.label =item[dataProp];
+						//chartUi.label =item[dataProp];
 						chartUi.value = 1;
 						chartUi.ids.push(item.id);
 						chartArray.push(chartUi);

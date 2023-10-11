@@ -6,7 +6,6 @@ export const speckleViewer = writable({
 
 })
 
-export const socketIoUrl = readable("http://localhost:3000")
 
 export const activeIoTIndicators = writable([])
 
@@ -21,9 +20,6 @@ export const draggables = writable([
     { id:'SensorHum', name: 'Humedad', active:false},
     { id:'PDF', name: 'PDF', active:false },
     // other items can go here
-    //walmart items
-    { id:'WmtSensors', name: 'Panel Digital Twin Walmart', active:false },
-    { id:'SensorDetailPanel', name: 'Sensor Detail Panel', active:true },
 ])
 
 export const currentSelection = writable(null)
@@ -41,27 +37,18 @@ export const selectionPropertiesOfInterest = readable([
     },
 ])
 
-export const passportProps = writable({
-    passportID: "999-999",
-    greenRate: 0.5,
-    greenStatus: "Bueno",
-})
+//numero deopto > 'ALL_MODEL_INSTANCE_COMMENTS' y torre > 'ALL_MODEL_DESCRIPTION'
+export const deptosProps = writable([{propId:"ALL_MODEL_INSTANCE_COMMENTS", propName:"NumDepto"}, {propId:"ALL_MODEL_DESCRIPTION", propName:"Torre"}])   
 
-export const lotesProps = writable(["type", "Area", "Estado","Servicios","Sector"]) 
-export const protosProps = writable(["LoteID", "Nombre", "Empresas","Fecha Ingreso", "Fecha Egreso", "Contacto", "Planos de Proyecto"])   
+export const catOfInterest = readable(["Mass", "Masa"])
 
+export const speckleDeptos = writable([])
 
-export const speckleParqueLotes = writable([])
+export const viewerDeptos = writable([])
 
-export const speckleParqueProtos = writable([])
+export const currentDepto = writable(null)
 
-export const viewerLotes = writable([])
-
-export const viewerProtos = writable([])
-
-export const currentLote = writable(null)
-
-export const currentProto = writable(null)
+export const currentViewerDepto = writable(null)
 
 export const sidebar_show = writable(false)
 
@@ -70,13 +57,8 @@ export const colorValueDisponibility = writable({
     Ocupado: 0xc0666f,
     Reservado: 0x666fc0,
 })
-//create the services available array
-export const servicesAvailable = readable(["Agua", "Electricidad", "Red Sanitaria"])
+
 //this variable will hold the service selected array from the filter 
-export const servicesSelected = writable(["Agua"])
-
-export const parkOperationCalendarID = readable("c_aaf71807274436569a51ea7e5cd5ba450cf11c70c083ac632a68cc4b9ff60dfc@group.calendar.google.com")
-
-export const googleCalendarEventsByDay = writable([])
+export const disponibilitySelected = writable("Disponible")
 
 export const chatMessages = writable([])
