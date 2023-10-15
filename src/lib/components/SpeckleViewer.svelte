@@ -20,7 +20,8 @@
 		currentDepto,
 		sidebar_show,
 		disponibilitySelected,
-		currentViewerDepto
+		currentViewerDepto,
+		speckleSchedule,
 	} from '../../stores/toolStore';
 	import FloatingModal from './FloatingModal.svelte';
 	export let _speckleStream;
@@ -81,7 +82,7 @@
 		//let userD = fetchUserData();
 		//console.log("user data");
 		//Espacio Colaborativo
-		const speckObj = reloadViewerGetObjectsByIds(v, _speckleStream, [], []);
+		const speckObj = reloadViewerGetObjectsByIds(v, _speckleStream, [], $speckleSchedule);
 		//console.log("speckleObj",v.speckleRenderer._scene);
 		//twoDCard(v);
 	});
@@ -143,7 +144,7 @@
 	speckleStream.subscribe((speckleS) => {
 		console.log('speckleStream........', speckleS);
 		if (v && speckleS) {
-			const speckObj = reloadViewerGetObjectsByIds(v, speckleS, [], []);
+			const speckObj = reloadViewerGetObjectsByIds(v, speckleS, [], $speckleSchedule);
 		}
 		
 	});

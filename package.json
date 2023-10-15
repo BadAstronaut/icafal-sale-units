@@ -26,6 +26,7 @@
 		"@smui/tab": "^7.0.0-beta.0",
 		"@smui/tab-bar": "^7.0.0-beta.0",
 		"@smui/tooltip": "^7.0.0-beta.0",
+		"@speckle/objectloader": "^2.16.0",
 		"@sveltejs/adapter-auto": "^2.1.0",
 		"@sveltejs/adapter-netlify": "^1.0.0-next.88",
 		"@sveltejs/adapter-node": "^1.3.1",

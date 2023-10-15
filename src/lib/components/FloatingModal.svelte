@@ -20,12 +20,6 @@
 	let cardLabel;
 	//implement onmount
 	onMount(
-		() => {
-			const scene = v.filteringManager.Renderer._scene;
-			const renderer = v.filteringManager.Renderer.renderer;
-			const camera = v.filteringManager.Renderer.camera;
-			v = get(speckleViewer).speckleViewer;
-		}
 		//console.log(v);
 		//console.log(v);
 		//console.log("showing sensor animation",get(activeIoTIndicators));
@@ -55,20 +49,20 @@
 		const camera = v.filteringManager.Renderer.camera; 
 		camera.layers.enable(2);
 		if (labelObject.infoLabel.position) {
-			gsap.to(labelObject.infoLabel.position, {
-				duration: 3,
-				x: 3.5,
-				repeat: -1,
-				yoyo: true,
-				ease: 'power1.inOut',
-				onUpdate: () => {
-					console.log(labelObject.infoLabel, 'label.................');
-					//labelObject.infoLabel.position.y = position.y;
-					v.requestRender();
-					labelObject.renderLabel.render(scene, camera);
-
-				}
-			});
+			// gsap.to(labelObject.infoLabel.position, {
+			// 	duration: 3,
+			// 	x: 3.5,
+			// 	repeat: -1,
+			// 	yoyo: true,
+			// 	ease: 'power1.inOut',
+			// 	onUpdate: () => {
+			// 		console.log(labelObject.infoLabel, 'label.................');
+			// 		//labelObject.infoLabel.position.y = position.y;
+			// 	}
+			// });
+			v.requestRender();
+			requestAnimationFrame(animateFloatingCard);
+			labelObject.renderLabel.render(scene, camera);
 		}
 	}
 	function threeLabelCardCreate(scene, renderer, labelContent, camera) {

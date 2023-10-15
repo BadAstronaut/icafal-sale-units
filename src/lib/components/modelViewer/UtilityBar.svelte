@@ -6,15 +6,18 @@
 		activeIoTIndicators,
 		speckleViewer,
 		speckleDeptos,
+		viewerDeptos,
 		colorValueDisponibility,
 		sidebar_show,
 		disponibilitySelected,
 		currentSelection,
-		chatMessages
+		chatMessages,
+		finishLoading
 	} from '/src/stores/toolStore.js';
 	import {
 		selectElementsByPropNameValue,
-		resetViewerFilters
+		resetViewerFilters,
+		generateRandomColor
 	} from '/src/lib/speckle/speckleHandler.js';
 
 	let setTopView = '/icons/top.svg';
@@ -53,39 +56,34 @@
 	}
 
 	//create a function that isole and filter ofjects based on propertyes
-	function colorByPropertyAvailability() {
+	function colorByDepartmentType() {
 		const activeV = get(speckleViewer).speckleViewer;
-		const specklePropName = 'passportID';
 		const disponibles = [];
 		const ocupados = [];
 		const reservados = [];
 		if (activeV && get(finishLoading)) {
-			const lotes = get(viewerLotes);
+			const _viewerDeptos = get(viewerDeptos);
 			//get groups of elements ids based on the state property
-			lotes.forEach((lote) => {
-				if (lote.Estado == 'Disponible') {
-					disponibles.push(lote.id);
-				} else if (lote.Estado == 'Ocupado') {
-					ocupados.push(lote.id);
-				} else if (lote.Estado == 'Reservado') {
-					reservados.push(lote.id);
+			//generate a list of unique deparment "tipologia"
+			//const tipologias = [...new Set(_viewerDeptos.map((depto) => depto.tipologia))];
+			const groupedByTipologia = _viewerDeptos.reduce((acc, depto) => {
+				if (!acc[depto.tipologia]) {
+					acc[depto.tipologia] = [];
 				}
+				acc[depto.tipologia].push(depto.id);
+				return acc;
+			}, {});
+			console.log('tipologias........', groupedByTipologia);
+			let toColorList = []
+			Object.entries(groupedByTipologia).map(([key, value]) => {
+				//console.log("each tipologia", tipologia)
+				const colorQueryObject = {
+					objectIds: value,
+					color: generateRandomColor()
+				};
+				toColorList.push(colorQueryObject)
 			});
-			const colors = get(colorValueDisponibility);
-			const dispQueryObject = {
-				objectIds: disponibles,
-				color: colors.Disponible
-			};
-			const ocupQueryObject = {
-				objectIds: ocupados,
-				color: colors.Ocupado
-			};
-			const resQueryObject = {
-				objectIds: reservados,
-				color: colors.Reservado
-			};
-			console.log('states of color disponible and ocupado', disponibles, ocupados);
-			activeV.setUserObjectColors([ocupQueryObject, dispQueryObject]);
+			activeV.setUserObjectColors(toColorList);
 			//activeV.setUserObjectColors([dispQueryObject])
 
 			//need to get all the speckle elements that have the property of passport and filter them
@@ -188,9 +186,9 @@
 
 	//create a function to get the api/bimbot response passing the viewerLotes inpunt
 	function getBimbotResponse() {
-		if($sidebar_show){
+		if ($sidebar_show) {
 			resetSidebar();
-		}else{
+		} else {
 			sidebar_show.set(true);
 		}
 
@@ -215,7 +213,7 @@
 	<ToolBarButton icon={homeView} toExecute={setHome} active={false} commandName="Set Home View" />
 	<ToolBarButton
 		icon={colorByProperty}
-		toExecute={colorByPropertyAvailability}
+		toExecute={colorByDepartmentType}
 		active={false}
 		commandName="Color por Ocupado, Disponible Reservado"
 	/>

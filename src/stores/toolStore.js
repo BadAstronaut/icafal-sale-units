@@ -5,7 +5,7 @@ export const speckleViewer = writable({
     speckleViewer: null
 
 })
-
+export const speckleSchedule = writable("98679a5a71")
 
 export const activeIoTIndicators = writable([])
 
@@ -38,7 +38,7 @@ export const selectionPropertiesOfInterest = readable([
 ])
 
 //numero deopto > 'ALL_MODEL_INSTANCE_COMMENTS' y torre > 'ALL_MODEL_DESCRIPTION'
-export const deptosProps = writable([{propId:"ALL_MODEL_INSTANCE_COMMENTS", propName:"NumDepto"}, {propId:"ALL_MODEL_DESCRIPTION", propName:"Torre"}])   
+export const deptosProps = writable([{propId:"ALL_MODEL_INSTANCE_COMMENTS", propName:"numero"}, {propId:"ALL_MODEL_DESCRIPTION", propName:"edificio"}])   
 
 export const catOfInterest = readable(["Mass", "Masa"])
 

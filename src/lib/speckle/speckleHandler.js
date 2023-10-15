@@ -1,8 +1,10 @@
 import { ViewerEvent } from "@speckle/viewer";
-import { getStreamCommits, getUserData } from "./speckleUtils.js";
+import * as THREE from 'three';
+import { getStreamCommits, getUserData, getStreamObjects } from "./speckleUtils.js";
 import { get } from "svelte/store";
-import { speckleViewer, finishLoading, speckleStream, speckleDatatree, speckleDeptos  } from "../../stores/toolStore";
+import { speckleViewer, finishLoading, speckleStream, speckleDatatree, speckleDeptos, speckleSchedule } from "../../stores/toolStore";
 import { buildViewerData } from '$lib/speckle/viewerBuilder';
+import ObjectLoader from '@speckle/objectloader';
 import { json } from "@sveltejs/kit";
 const token = import.meta.env.VITE_SPECKLE_TOCKEN;
 
@@ -45,85 +47,14 @@ export async function filterByPromptConditions(categoryName, propertyName, prope
   const speckledataTree = get(speckleDatatree);
   let elementIds = [];
   console.log(categoryName, propertyName, propertyValue, condition, "input properties.........");
-  // try {
-  //   speckledataTree.root.children[0].children.forEach((child) => {
-  //     console.log(child, "child");
-  //     if (child.model.children.length > 0 && child.model.children[0].data.category === categoryName) {
-  //       selectedCategoryElements = child.model.children;
-  //       //console.log(child.model.children[0].data.category, "category");
-
-  //     }
-  //   });
-  // }
-  // catch (error) {
-  //   console.log(error, "error");
-  // }
-  //change logic to work with only one category at the time 
-  if(categoryName==="Emplazamiento"){
+  if (categoryName === "Emplazamiento") {
     elementIds = promptParameterExtractorEmplazamiento(propertyName, propertyValue, condition);
   }
-    //const elementIds = promptParameterExtractor(selectedCategoryElements, propertyName, propertyValue, condition);
+  //const elementIds = promptParameterExtractor(selectedCategoryElements, propertyName, propertyValue, condition);
   return elementIds;
   //console.log(selectedCategoryElements, "selectedCategoryElements");
 
 };
-// function promptParameterExtractorEmplazamiento(propertyName, propertyValue, condition) {
-//   //iterate over speckledataThreeCategory and get the elements that match the condition speckle.data.definition
-//   //this is too slow will need to refactor later speed important
-//   const lotes =  get(viewerLotes)
-//   let matchElementIds = [];
-//   lotes.forEach((element) => {
-//     for (const [key, value] of Object.entries(element)) {
-//       //console.log(key, value, "key and value");
-//       if (key === propertyName) {
-//         //console.log(key, value, "key and value");
-//         //check if the condition is met
-//         //we are force to add possible condition for the bot answers since its not trained on this pattern 
-//         if (condition === "equal" || condition === "equals" ) {
-//           if (value === propertyValue) {
-//             matchElementIds.push(element.id);
-//             console.log("condition met", element);
-//           }
-//         }
-//         else if (condition === "contains" || condition === "includes" ) {
-//           //console.log(value, propertyValue, "value and property value.........");
-//           if (value.includes(propertyValue)) {
-//             matchElementIds.push(element.id);
-//             console.log("condition met", element);
-//           }
-//         }
-//         else if (condition === "greater") {
-//           if (value > propertyValue) {
-//             console.log("condition met");
-//           }
-//         }
-//         else if (condition === "less") {
-//           if (value < propertyValue) {
-//             console.log("condition met");
-//           }
-//         }
-//         else if (condition === "greaterOrEqual") {
-//           if (value >= propertyValue) {
-//             console.log("condition met");
-//           }
-//         }
-//         else if (condition === "lessOrEqual") {
-//           if (value <= propertyValue) {
-//             console.log("condition met");
-//           }
-//         }
-//       }
-//     }
-//     //console.log(matchElementIds, "elementProperties.......");
-//   });
-//   console.log(matchElementIds, "matchElementIds.......");
-//   colorById(matchElementIds, 0x8bc34a);
-//   return matchElementIds;
-//   //console.log(matchElementIds, "matchElementIds.......");
-// }
-
-//function to deconstruct speckle object and return custom object with properties of interest
-//custom per use case. 
 export function lightSpeckleGenerator(speckleObjectDataTree) {
   let lightSpeckleObject = {
     id: speckleObject.id,
@@ -232,6 +163,14 @@ export function selectElementsByPropNameValue(propNAme, propValue) {
   }
 
 }
+export function generateRandomColor() {
+  const getRandomByte = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
+  const _color = `0x${getRandomByte()}${getRandomByte()}${getRandomByte()}`;
+  console.log("coliring",_color);
+  let hexNumber = parseInt(_color, 16);
+  let color = new THREE.Color(hexNumber);
+  return color;
+}
 
 export async function resetViewerFilters() {
   const v = get(speckleViewer).speckleViewer;
@@ -245,19 +184,24 @@ export async function reloadViewerGetObjectsByIds(
   viewerI,
   speckleStream,
   ids,
-  additionalStream
+  scheduleStram,
 ) {
   const stm = fetchStreamData;
   const v = viewerI;
   console.log("currentT", token);
   const branch = await fetchStreamData(speckleStream);
-  console.log("branch in reloadv----", branch, speckleStream);
-
+  const scheduleBranch = await fetchStreamData(scheduleStram);
+  console.log("branch in reloadv----", speckleStream, scheduleStram, scheduleBranch);
   await v.unloadAll();
   if (branch) {
     const obj = objUrl(speckleStream, branch.commits.items[0].referencedObject);
-    console.log("obj", obj);
+    //console.log("obj", obj);
+    // get schedule 
+    //const schedule = objUrl(scheduleStram, scheduleBranch.commits.items[0].referencedObject);
+    //console.log("obj Schedule", schedule);
+
     await v.loadObject(obj, token);
+
     v.zoom(0.7);
 
     await v.init();
@@ -267,7 +211,6 @@ export async function reloadViewerGetObjectsByIds(
       speckleDatatree.set(v.getDataTree());
       buildViewerData();
       finishLoading.set(true);
-      console.log("speckleViewer-----", get(speckleDatatree));
     })
     const speckObjects = v.getDataTree();
     const objects = "ok"
@@ -279,6 +222,11 @@ export async function reloadViewerGetObjectsByIds(
 
 }
 
+export async function processSpeckleSchedule(objectId = "b6bc2de8c6e1a8412587e561f8d07d8b") {
+  const streamSchedule = await getStreamObjects(get(speckleSchedule), token, objectId);
+  return streamSchedule;
+
+}
 export async function reloadViewer(speckleStream) {
   const v = get(speckleViewer).speckleViewer;
   const branch = await fetchStreamData(speckleStream);
@@ -320,8 +268,9 @@ export async function getPropertiesByTypeParameter(pName, pValueList) {
 }
 //give list of 
 export function filterByCategoryNames(DT, categoryNames) {
+  //console.log("------grinding objedctsss-",DT, );
   const objects = DT.findAll((uui, obj) => {
-    //console.log("-------",obj, );
+    //console.log(obj);
     if (obj.category && obj.speckle_type == "Objects.Other.Revit.RevitInstance") {
       const catName = obj.category;
       //console.log("-------",obj, );
@@ -331,6 +280,7 @@ export function filterByCategoryNames(DT, categoryNames) {
   });
   return objects;
 }
+
 
 //X ray functionality it will take a list of categories,
 //and list of current selected elements
