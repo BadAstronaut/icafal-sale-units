@@ -2,13 +2,12 @@
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-
+	import 'iconify-icon'
 	export let propName = '';
 	export let propValue = '';
 
 	let _propValue = '';
 	let _urlProp = false;
-	let icon = "/icons/arrow-badge-right.svg"
 
 	function truncateString(str, maxLength) {
 		let truncatedString = '';
@@ -49,7 +48,7 @@
 </script>
 
 <li class="row-container">
-	<img src={icon} alt="-" />
+	<iconify-icon icon="fluent-mdl2:radio-bullet"></iconify-icon>
 	<span class="prop-style" >{propName} : </span>
 	{#if _urlProp}
 		<a class="prop-style" a href={propValue} target="_blank">{truncateString(propValue, 20)}</a>
@@ -64,6 +63,7 @@
 		flex-direction: row;
 		align-items: start;
 		justify-content: flex-start;
+		gap: 0.2em;
 		width: 100%;
 		height: 0.9em;
 		border-radius: 5px;

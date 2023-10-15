@@ -3,41 +3,44 @@
 	import * as THREE from 'three';
 	import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 	import { onMount } from 'svelte';
+	import 'iconify-icon';
 	import { get } from 'svelte/store';
 	import { gsap, Power1 } from 'gsap';
 	import {
 		speckleViewer,
 		finishLoading,
 		currentDepto,
-		currentViewerDepto
+		currentViewerDepto,
+		showModal
 	} from '../../stores/toolStore';
 	import InfoModal from './InfoModal.svelte';
 	let canvas;
 	let executingCommand;
-	let showModal = true;
+	let _showModal = true;
 	let renderLabel;
 	let v;
 	let cardLabel;
 	//implement onmount
-	onMount(
-		//console.log(v);
-		//console.log(v);
-		//console.log("showing sensor animation",get(activeIoTIndicators));
-	);
-	currentDepto.subscribe((v) => {
+	currentViewerDepto.subscribe((depto) => {
+		v = get(speckleViewer).speckleViewer;
+		console.log('viewer dynamic update', depto);
 		if (v) {
-			//console.log(v);
-			v = get(speckleViewer).speckleViewer;
-			console.log('showing sensor animation', v);
-			const scene = v.filteringManager.Renderer._scene;
-			const renderer = v.filteringManager.Renderer.renderer;
-			const camera = v.filteringManager.Renderer.camera;
-			console.log('getting the scene to add animation', renderer);
-			cardLabel = threeLabelCardCreate(scene, renderer, {}, camera);
-			animateFloatingCard(cardLabel, scene, camera);
-			console.log('viewer dynamic update', cardLabel);
-			//right now if we add animations
-			//
+			if (depto && depto.clickinfo) {
+				console.log(v, 'ready for rendering');
+				//console.log('showing sensor animation', v);
+				const scene = v.filteringManager.Renderer._scene;
+				const renderer = v.filteringManager.Renderer.renderer;
+				const camera = v.filteringManager.Renderer.camera;
+				//console.log('getting the scene to add animation', renderer);
+				cardLabel = threeLabelCardCreate(depto, scene, renderer, {}, camera);
+				animateFloatingCard(cardLabel, scene, camera);
+				//console.log('viewer dynamic update', cardLabel);
+				//right now if we add animations
+				//
+			} else {
+				removeCurrentLabels(v.filteringManager.Renderer._scene, cardLabel);
+				console.log('viewer dynamic update', v);
+			}
 		}
 	});
 	//need to create a gsap animation of the twoDcard to make it look like its floating
@@ -46,7 +49,7 @@
 		const v = get(speckleViewer).speckleViewer;
 		const scene = v.filteringManager.Renderer.scene;
 		const renderer = v.filteringManager.Renderer.renderer;
-		const camera = v.filteringManager.Renderer.camera; 
+		const camera = v.filteringManager.Renderer.camera;
 		camera.layers.enable(2);
 		if (labelObject.infoLabel.position) {
 			// gsap.to(labelObject.infoLabel.position, {
@@ -60,41 +63,67 @@
 			// 		//labelObject.infoLabel.position.y = position.y;
 			// 	}
 			// });
-			v.requestRender();
-			requestAnimationFrame(animateFloatingCard);
-			labelObject.renderLabel.render(scene, camera);
+			//v.requestRender();
+			//requestAnimationFrame(animateFloatingCard);
+			//labelObject.renderLabel.render(scene, camera);
 		}
 	}
-	function threeLabelCardCreate(scene, renderer, labelContent, camera) {
+	function threeLabelCardCreate(element, scene, renderer, labelContent, camera) {
 		const v = get(speckleViewer).speckleViewer;
+		console.log(element, 'element info');
+		const elementInfo = element.element[0];
 		labelContent = {
-			title: 'Earth',
-			icon: 'https://threejs.org/examples/textures/uv_grid_opengl.jpg',
-			description:
-				'Earth is the third planet from the Sun and the only astronomical object known to harbor life.'
+			title: `Departamento: ${elementInfo.numero}`,
+			number: elementInfo.numero,
+			tipologia: elementInfo.tipologia,
+			area: elementInfo.area,
+			orientacion: elementInfo.orientacion,
+			precio: '4940'
 		};
 		const earthDiv = document.createElement('div');
 		earthDiv.className = 'label';
 		earthDiv.innerHTML = `
 		                    <div class="card" style="width: 10em; height:auto; border-radius: 0.4em; background-color: rgba(255, 255, 255, 0.5); box-shadow: 0  2px 5px rgba(144, 144, 144, 0.2); padding:0.3em; z-index:100">
-		                        <div class="flex-container" style ="display:flex; flex-direction:row; align-items:center; gap:0.5em; ">
-		                            <img src="${labelContent.icon}" alt="Icon" style="width: 1em; height: 1em;">
+		                        <div class="flex-container" style ="display:flex; flex-direction:row; align-items:flex-start; gap:0.5em; justify-content:flex-start;">
+		                            <iconify-icon icon="mdi:home"></iconify-icon>
 		                            <h2 style="font-size: 0.8em; margin-bottom: 0.5em;">${labelContent.title}</h2>
 		                        </div>
-		                        <p style="font-size: 0.6em;">${labelContent.description}</p>
+								<div class="flex-container" style ="display:flex; flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:0.1em; width:100%">
+									<div class="flex-container" style ="display:flex; flex-direction:row; justify-content:flex-start; align-items:flex-start; gap:0.5em; border: 1px solid lightgray;border-radius: 4px;padding: 1px; margin:0px;  width:100%  ">
+										<iconify-icon icon="fluent-mdl2:radio-bullet"></iconify-icon>
+										<p style="font-size: 0.6em; margin-bottom: 0.2em;">Tipo Departamento: ${labelContent.tipologia}</p>
+									</div>
+									<div class="flex-container" style ="display:flex; flex-direction:row; justify-content:flex-start; align-items:flex-start; gap:0.5em; border: 1px solid lightgray;border-radius: 4px;padding: 1px; margin:0px;  width:100%  ">
+										<iconify-icon icon="fluent-mdl2:radio-bullet"></iconify-icon>
+										<p style="font-size: 0.6em; margin-bottom: 0.2em;">Area: ${labelContent.area} m2</p>
+									</div>
+									<div class="flex-container" style ="display:flex; flex-direction:row; justify-content:flex-start; align-items:flex-start; gap:0.5em; border: 1px solid lightgray;border-radius: 4px;padding: 1px; margin:0px; width:100%  ">
+										<iconify-icon icon="fluent-mdl2:radio-bullet"></iconify-icon>
+										<p style="font-size: 0.6em; margin-bottom: 0.2em;">Orientación: ${labelContent.orientacion}</p>
+									</div>
+									<div class="flex-container" style ="display:flex; flex-direction:row; justify-content:flex-start; align-items:flex-start; gap:0.5em; border: 1px solid lightgray;border-radius: 4px;padding: 1px; margin:0px; width:100% ">
+										<iconify-icon icon="fluent-mdl2:radio-bullet"></iconify-icon>
+										<p style="font-size: 0.6em; margin-bottom: 0.1em;">Precio: ${labelContent.precio} UF</p>
+									</div>
+								</div>
 		                    </div>
 		                    `;
 
 		camera.layers.enable(2);
 		const infoLabel = new CSS2DObject(earthDiv);
-		infoLabel.position.set(0, 0, 0);
+		console.log(
+			'scene data tree------------A---a----',
+			element.clickinfo.clientX,
+			element.clickinfo.clientY
+		);
+		infoLabel.position.set(element.clickinfo.clientX, element.clickinfo.clientY, 0);
 		//infoLabel.center.set(0, 0);
 		infoLabel.layers.set(2);
 		scene.add(infoLabel);
 		//scene.add(cPointLabel);
-		console.log('scene data tree------------C---c----', infoLabel, scene);
+		//console.log('scene data tree------------C---c----', infoLabel, clickEvent);
 		const parentContainer = v.container;
-		console.log('scene data tree-----dd--di----', parentContainer);
+		//console.log('scene data tree-----dd--di----', parentContainer);
 		renderLabel = new CSS2DRenderer(parentContainer);
 		renderLabel.setSize(parentContainer.clientWidth, parentContainer.clientHeight);
 
@@ -112,14 +141,27 @@
 			renderLabel: renderLabel
 		};
 		renderLabel.render(scene, camera);
-		v.update();
+		//v.update();
 		return cardLabelObject;
 	}
+
+	function removeCurrentLabels(scene) {
+		const parentContainer = v.container;
+		if (cardLabel.infoLabel) {
+			scene.remove(cardLabel.infoLabel);
+			parentContainer.removeChild(cardLabel.renderLabel.domElement);
+			cardLabel={
+				infoLabel: null,
+				renderLabel: null,
+			}; 
+		}
+	}
+	console.log('modal on off', $showModal);
 	///////////// Model Loader //////////////
 </script>
 
 <canvas class="three-container" bind:this={canvas} />
-{#if showModal}
+{#if _showModal}
 	<!-- <InfoModal
         bind:showModal
         onClose={() => (showModal = false)}

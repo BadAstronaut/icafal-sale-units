@@ -98,8 +98,8 @@
 		//console.log('dataList', dataList);
 		if (dataList && dataList.length > 0) {
 			dataList.forEach((item) => {
-				//console.log("item", dataProp);
 				if (item[dataProp] != null) {
+					console.log("item", item[dataProp]);
 					//check if the value item[dataProp]  is in any of the objects in chartArray
 					let index = chartArray.findIndex((obj) => obj.label === item[dataProp]);
 					if (index === -1) {

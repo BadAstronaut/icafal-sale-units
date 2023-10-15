@@ -22,6 +22,7 @@
 	import MultiSelect from './MultiSelect.svelte';
 	import ChatUi from '../gptChat/ChatUi.svelte';
 	import ImageViewer from './ImageViewer.svelte';
+	import { element } from 'svelte/internal';
 
 	export let show = false;
 	let modal_show = false;
@@ -86,7 +87,7 @@
 {#if show}
 	<nav class="side-bar" transition:fly={{ x: 250, opacity: 1 }}>
 		{#if depto}
-			<span>Info Proto: {depto.NumDepto}</span>
+			<span>Departamento: {depto.numero}</span>
 			<div class="side-container">
 				{#each Object.entries(depto) as [propName, propValue]}
 					<SideBarRow {propName} {propValue} />

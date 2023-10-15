@@ -12,7 +12,7 @@
 		viewerDeptos,
 		sidebar_show,
 		currentDepto,
-		currentViewerDepto,
+		currentViewerDepto
 	} from '../stores/toolStore';
 	import UtilityBar from '$lib/components/modelViewer/UtilityBar.svelte';
 	import DonoutKpiChart from '$lib/components/charts/DonoutKpiChart.svelte';
@@ -27,34 +27,36 @@
 	let _sidebar_show = get(sidebar_show);
 	let selectedElement = [];
 	let _viewerLotes = [];
-	
-
 
 	//implement onMount function
 	onMount(async () => {
 		//handle sidebar show and hide
 		currentViewerDepto.subscribe((v) => {
-			selectedElement = v;
-			const viewerDeptosData = get(viewerDeptos);
+			if (v) {
+				selectedElement = v.element;
+				const viewerDeptosData = get(viewerDeptos);
 
-			if (selectedElement && selectedElement.length > 0) {
-				const viewerDeptosDataIds = viewerDeptosData.map((item) => item.id);
-				const viewerDataIds = [...viewerDeptosDataIds];
-				//console.log(viewerDataIds.includes(selectedElement[0]?.id), viewerDataIds)
-				if (viewerDataIds.includes(selectedElement[0]?.id)) {
-					//console.log('found showing sidebar', selectedElement[0]?.id);
-					_sidebar_show = true;
-					const selectedDepto = viewerDeptosData.find((item) => item.id === selectedElement[0]?.id);
-					console.log(_sidebar_show,"========",selectedDepto);
-					currentDepto.set(selectedDepto);
+				if (selectedElement && selectedElement.length > 0) {
+					const viewerDeptosDataIds = viewerDeptosData.map((item) => item.id);
+					const viewerDataIds = [...viewerDeptosDataIds];
+					//console.log(viewerDataIds.includes(selectedElement[0]?.id), viewerDataIds)
+					if (viewerDataIds.includes(selectedElement[0]?.id)) {
+						//console.log('found showing sidebar', selectedElement[0]?.id);
+						_sidebar_show = true;
+						const selectedDepto = viewerDeptosData.find(
+							(item) => item.id === selectedElement[0]?.id
+						);
+						console.log(_sidebar_show, '========', selectedDepto);
+						currentDepto.set(selectedDepto);
+					} else {
+						//console.log('not found hiding sidebar');
+						_sidebar_show = false;
+						currentDepto.set(null);
+					}
 				} else {
-					//console.log('not found hiding sidebar');
 					_sidebar_show = false;
 					currentDepto.set(null);
 				}
-			} else {
-				_sidebar_show = false;
-				currentDepto.set(null);
 			}
 		});
 
@@ -62,7 +64,6 @@
 			speckleViewerRunning = sv;
 			//console.log('from the store', get(speckleViewer));
 		});
-
 	});
 	finishLoading.subscribe((v) => {
 		console.log('finishLoading', v);
@@ -76,17 +77,15 @@
 		console.log('sidebar_show', v);
 		_sidebar_show = v;
 	});
-	
-
 </script>
+
 <SpeckleViewer _speckleStream={$speckleStream} />
 
 {#if loadCompleted}
 	<UtilityBar />
-	<DonoutKpiChart dataProp={'Torre'} tittle="Deptos Por Torre:" />
+	<DonoutKpiChart dataProp={'edificio'} tittle="Deptos Por Edificio:" />
 	<Sidebar bind:show={_sidebar_show} />
 {:else}
-
 	<div class="center-loader">
 		<Circle2 size="60" color="#FF3E00" unit="px" duration="1.5s" />
 	</div>

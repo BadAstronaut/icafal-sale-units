@@ -21,7 +21,9 @@
 		sidebar_show,
 		disponibilitySelected,
 		currentViewerDepto,
+		viewerDeptos,
 		speckleSchedule,
+		showModal,
 	} from '../../stores/toolStore';
 	import FloatingModal from './FloatingModal.svelte';
 	export let _speckleStream;
@@ -50,17 +52,25 @@
 				const clieckedElement = args.hits[0].object;
 				v.selectObjects([clieckedElement.id]);
 				v.isolateObjects([clieckedElement.id]);
-				currentViewerDepto.set([clieckedElement]);
-
+				//console.log($viewerDeptos,"deptoSelectedObject",clieckedElement )
+				//filter viewerDeptos list to get the one with the same clickedElement id 
+				
+				const deptoSelected = get(viewerDeptos).filter((item) => item.id === clieckedElement.id);	
+				let deptoSelectedObject = {
+					element: [deptoSelected[0]],
+					clickinfo: args.event,
+				}
+				currentViewerDepto.set(deptoSelectedObject);
 				//changeElementColorByIds([clieckedElement.id], 0xff0000, true);
 				// @ts-ignore
-				console.log(clieckedElement, 'clicked!');
+				//console.log(clieckedElement, 'clicked!', args.event);
 			} else {
 				v.resetSelection();
 				// @ts-ignore
-				currentViewerDepto.set([]);
-				currentDepto.set([]);
-				disponibilitySelected.set([]);
+				currentViewerDepto.set({element:[], clickinfo: null});
+				showModal.set(false);
+				//currentDepto.set([]);
+				//disponibilitySelected.set([]);
 			}
 			//console.log(v.needsRender);
 		});

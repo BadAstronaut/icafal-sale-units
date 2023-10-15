@@ -52,6 +52,8 @@ export const currentViewerDepto = writable(null)
 
 export const sidebar_show = writable(false)
 
+export const showModal = writable(false)
+
 export const colorValueDisponibility = writable({
     Disponible: 0x6fc066,
     Ocupado: 0xc0666f,
