@@ -17,7 +17,7 @@
 	import UtilityBar from '$lib/components/modelViewer/UtilityBar.svelte';
 	import DonoutKpiChart from '$lib/components/charts/DonoutKpiChart.svelte';
 	import Sidebar from '$lib/components/sidebarModal/Sidebar.svelte';
-	import { Circle2 } from 'svelte-loading-spinners';
+	import { Jellyfish } from 'svelte-loading-spinners';
 	import { navigating } from '$app/stores';
 	export let data;
 
@@ -87,7 +87,7 @@
 	<Sidebar bind:show={_sidebar_show} />
 {:else}
 	<div class="center-loader">
-		<Circle2 size="60" color="#FF3E00" unit="px" duration="1.5s" />
+		<Jellyfish size="60" color="#FF3E00" unit="px" duration="1.5s" />
 	</div>
 {/if}
 

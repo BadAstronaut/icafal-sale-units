@@ -25,7 +25,9 @@
 		//console.log('from the store', v);
 		dataList = v;
 		const chartData = getChartArray();
-		//console.log('chartDataddd', chartData);
+		console.log('chartDataddd', chartData);
+		//sum up all the values in the chartData array
+		let total = chartData.reduce((acc, item) => acc + item.value, 0);
 		if (chartData.length > 0) {
 			chartData.forEach((item) => {
 				chartLabels.push(item.label);
@@ -33,7 +35,7 @@
 			});
 			//get the value of the chartData object that has label disponible
 			// let disponibleIndex = chartData.findIndex((obj) => obj.label === 'Disponible');
-			// disponibleValue = chartData[disponibleIndex].value;
+			disponibleValue = total;
 
 			//console.log(chartLabels, chartValues, 'charting .... ');
 			if (chart) {
@@ -52,9 +54,9 @@
 					{
 						label: "Num. Deptos",
 						backgroundColor: [
-							'rgba(111,192,102,0.6)',
-							'rgba(192,102,111,0.6)',
-							'rgba(102,111,192,0.6)'
+							'#ff9a9e',
+							'#fbbeb7',
+							'#faccc1'
 						],
 						borderColor: 'rgba(94,104,121,0.388)',
 						borderWidth: 0.1,
@@ -95,11 +97,9 @@
 			ids: []
 		};
 		let chartArray = [];
-		//console.log('dataList', dataList);
 		if (dataList && dataList.length > 0) {
 			dataList.forEach((item) => {
 				if (item[dataProp] != null) {
-					console.log("item", item[dataProp]);
 					//check if the value item[dataProp]  is in any of the objects in chartArray
 					let index = chartArray.findIndex((obj) => obj.label === item[dataProp]);
 					if (index === -1) {
@@ -116,7 +116,6 @@
 							ids: []
 						};
 					} else {
-						//if it is, increase the value of the object
 						chartArray[index].value += 1;
 						chartArray[index].ids.push(item.id);
 					}

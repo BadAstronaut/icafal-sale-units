@@ -23,10 +23,10 @@
 	let setTopView = '/icons/top.svg';
 	let colorBySector = '/icons/brand-google-maps.svg';
 	let homeView = '/icons/home-2.svg';
-	let services = '/icons/bolt.svg';
-	let chatIcon = '/icons/robot.svg';
+	// let services = '/icons/bolt.svg';
+	// let chatIcon = '/icons/robot.svg';
 
-	let colorByProperty = '/icons/traffic-lights.svg';
+	let colorByProperty = '/icons/plan.svg';
 	let filterOff = '/icons/filter-off.svg';
 
 	let tempObjectIds = ['ee07ac99d4cfd23c59ef94bda65bdbe0', 'ccb4b5e5bf2ae2bfb1524e62462155d2'];
@@ -215,9 +215,9 @@
 		icon={colorByProperty}
 		toExecute={colorByDepartmentType}
 		active={false}
-		commandName="Color por Ocupado, Disponible Reservado"
+		commandName="Color por Tipologia de Departamento"
 	/>
-	<ToolBarButton
+	<!-- <ToolBarButton
 		icon={colorBySector}
 		toExecute={colorByPropertySector}
 		active={false}
@@ -228,19 +228,19 @@
 		toExecute={filterByService}
 		active={false}
 		commandName="Filter Reset"
-	/>
+	/> -->
 	<ToolBarButton
 		icon={filterOff}
 		toExecute={removeFilterViewer}
 		active={false}
 		commandName="Filter Reset"
 	/>
-	<ToolBarButton
+	<!-- <ToolBarButton
 		icon={chatIcon}
 		toExecute={getBimbotResponse}
 		active={false}
 		commandName="Chat Bot"
-	/>
+	/> -->
 </div>
 
 <style>

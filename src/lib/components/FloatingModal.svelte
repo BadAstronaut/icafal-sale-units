@@ -26,7 +26,7 @@
 		console.log('viewer dynamic update', depto);
 		if (v) {
 			if (depto && depto.clickinfo) {
-				console.log(v, 'ready for rendering');
+				//console.log(v, 'ready for rendering');
 				//console.log('showing sensor animation', v);
 				const scene = v.filteringManager.Renderer._scene;
 				const renderer = v.filteringManager.Renderer.renderer;
@@ -39,7 +39,7 @@
 				//
 			} else {
 				removeCurrentLabels(v.filteringManager.Renderer._scene, cardLabel);
-				console.log('viewer dynamic update', v);
+				//console.log('viewer dynamic update', v);
 			}
 		}
 	});
@@ -70,7 +70,6 @@
 	}
 	function threeLabelCardCreate(element, scene, renderer, labelContent, camera) {
 		const v = get(speckleViewer).speckleViewer;
-		console.log(element, 'element info');
 		const elementInfo = element.element[0];
 		labelContent = {
 			title: `Departamento: ${elementInfo.numero}`,
@@ -80,9 +79,9 @@
 			orientacion: elementInfo.orientacion,
 			precio: '4940'
 		};
-		const earthDiv = document.createElement('div');
-		earthDiv.className = 'label';
-		earthDiv.innerHTML = `
+		const twoDCard = document.createElement('div');
+		twoDCard.className = 'label';
+		twoDCard.innerHTML = `
 		                    <div class="card" style="width: 10em; height:auto; border-radius: 0.4em; background-color: rgba(255, 255, 255, 0.5); box-shadow: 0  2px 5px rgba(144, 144, 144, 0.2); padding:0.3em; z-index:100">
 		                        <div class="flex-container" style ="display:flex; flex-direction:row; align-items:flex-start; gap:0.5em; justify-content:flex-start;">
 		                            <iconify-icon icon="mdi:home"></iconify-icon>
@@ -110,20 +109,11 @@
 		                    `;
 
 		camera.layers.enable(2);
-		const infoLabel = new CSS2DObject(earthDiv);
-		console.log(
-			'scene data tree------------A---a----',
-			element.clickinfo.clientX,
-			element.clickinfo.clientY
-		);
-		infoLabel.position.set(element.clickinfo.clientX, element.clickinfo.clientY, 0);
-		//infoLabel.center.set(0, 0);
+		const infoLabel = new CSS2DObject(twoDCard);
+		infoLabel.position.set(element.clickinfo.clientX, element.clickinfo.clientY+75, 0);
 		infoLabel.layers.set(2);
 		scene.add(infoLabel);
-		//scene.add(cPointLabel);
-		//console.log('scene data tree------------C---c----', infoLabel, clickEvent);
 		const parentContainer = v.container;
-		//console.log('scene data tree-----dd--di----', parentContainer);
 		renderLabel = new CSS2DRenderer(parentContainer);
 		renderLabel.setSize(parentContainer.clientWidth, parentContainer.clientHeight);
 
@@ -131,9 +121,6 @@
 		renderLabel.domElement.style.pointerEvents = 'none';
 		renderLabel.domElement.style.position = 'absolute';
 		renderLabel.domElement.style.top = '0px';
-		//renderLabel.render(scene, camera);
-		console.log('scene data tree', renderLabel);
-		//append labelRenderer to the parent container
 		parentContainer.appendChild(renderLabel.domElement);
 
 		const cardLabelObject = {
@@ -141,7 +128,13 @@
 			renderLabel: renderLabel
 		};
 		renderLabel.render(scene, camera);
-		//v.update();
+		// Initial GSAP intro animation for the label
+		gsap.from(twoDCard, {
+			autoAlpha: 0,
+			y: '+=150',
+			duration: 0.5,
+			ease: 'power2.out'
+		});
 		return cardLabelObject;
 	}
 
@@ -150,13 +143,13 @@
 		if (cardLabel.infoLabel) {
 			scene.remove(cardLabel.infoLabel);
 			parentContainer.removeChild(cardLabel.renderLabel.domElement);
-			cardLabel={
+			cardLabel = {
 				infoLabel: null,
-				renderLabel: null,
-			}; 
+				renderLabel: null
+			};
 		}
 	}
-	console.log('modal on off', $showModal);
+	//console.log('modal on off', $showModal);
 	///////////// Model Loader //////////////
 </script>
 

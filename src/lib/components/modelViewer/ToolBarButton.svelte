@@ -3,6 +3,7 @@
 	import '/src/css/styles.css';
     import 'tippy.js/themes/light.css';
     import tippy from "sveltejs-tippy";
+	import 'iconify-icon';
 	import { finishLoading } from '/src/stores/toolStore';
 	export let icon;
 	export let toExecute;

@@ -2,7 +2,7 @@
 	import pico from '@picocss/pico';
 </script>
 
-<nav class="layout">
+<nav>
 	<!-- add logoCTEC as a a logo in the top left corner of the nav bar -->
 	<img class="logo" src="/logoICAFAL.png" alt="logo Icafal" width="auto" height="auto" />
 	<div class="head-title">
@@ -18,7 +18,7 @@
 	<slot />
 </main>
 
-<footer class="layout">©Vero Viewer 0.1</footer>
+<footer class="footer">©ICAFAL Web Platforms</footer>
 
 <style>
 	nav {
@@ -38,7 +38,7 @@
 	}
 	.head-title {
 		position: absolute;
-		top: -5px;
+		top: 5px;
 		left: 5em;
 		padding: 5px;
 		display: flex;
@@ -46,19 +46,20 @@
 		justify-content: flex-start;
 		align-items: flex-start;
 		height: 1.5em;
+		gap: 0;
 		width: 100vw;
 		margin: 0;
 	}
 	.coord {
-		font-size: 0.7rem;
+		font-size: 0.9rem;
 		height: 1em;
 		font-weight: 500;
 		margin: 0;
 	}
 	.logo {
 		position: absolute;
-		top: -5px;
-		left: 0;
+		top: 10px;
+		left: 10px;
 		width: 4.5em;
 		height: auto;
 		padding: 5px;
@@ -81,7 +82,6 @@
 	}
 	main {
 		position: relative;
-		
 		height: 98vh;
 		width: 100%;
 		display: flex;
@@ -95,12 +95,15 @@
 	}
 
 	footer {
+		position: absolute;
+		bottom: 0;
+		right: 1;
+		margin-bottom: 2vh;
 		text-align: center;
 		color: rgba(94, 104, 121, 0.388);
-		padding: 0;
 		height: 1vh;
 		width: 100%;
 		z-index: 1000;
-		margin: 0;
+
 	}
 </style>
