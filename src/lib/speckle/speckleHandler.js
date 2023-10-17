@@ -219,7 +219,14 @@ export async function reloadViewerGetObjectsByIds(viewerI, speckleStream, ids, s
 
 
 export async function processSpeckleSchedule(objectId = "b6bc2de8c6e1a8412587e561f8d07d8b") {
-  const streamSchedule = await getStreamObjects(get(speckleSchedule), token, objectId);
+  //implement try catch for stream schedule
+  let streamSchedule 
+  try {
+    streamSchedule= await getStreamObjects(get(speckleSchedule), token, objectId);
+  }
+  catch (error) {
+    console.log("error fetching schedule data", error, streamSchedule );
+  }
   //getting the schedule data
   console.log("schedule data", streamSchedule);
   return streamSchedule;
