@@ -23,7 +23,7 @@
 
 {#if displayWarning}
 	<div class="mobile-warning">
-		It's recommended to use a desktop for a better experience.
+		Para mejor experiencia utilice computador 💻.
 		<button on:click={closeWarning}>Close</button>
 	</div>
 {/if}
