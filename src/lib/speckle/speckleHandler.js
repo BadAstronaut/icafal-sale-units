@@ -199,12 +199,13 @@ export async function reloadViewerGetObjectsByIds(viewerI, speckleStream, ids, s
       
       speckleViewer.set({ 'speckleViewer': v });
       speckleDatatree.set(v.getDataTree());
-      
+      console.log("speckleViewer and data tree set", get(speckleDatatree));
       await buildViewerData();
-      
-      finishLoading.set(true);
-
+  
       const speckObjects = v.getDataTree();
+      finishLoading.set(true);
+      console.log("speckleViewer after data build");
+
       return speckObjects;
   } else {
       return null;
