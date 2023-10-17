@@ -46,11 +46,15 @@ export const speckleDeptos = writable([])
 
 export const viewerDeptos = writable([])
 
+export const currentColorSet = writable([])
+
 export const currentDepto = writable(null)
 
 export const currentViewerDepto = writable(null)
 
 export const sidebar_show = writable(false)
+
+export const displayCompositionTable_show = writable(false)
 
 export const showModal = writable(false)
 

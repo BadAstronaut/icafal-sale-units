@@ -25,21 +25,15 @@
 	import { element } from 'svelte/internal';
 
 	export let show = false;
-	let modal_show = false;
 	let depto = get(currentDepto);
 	console.log('depto', depto);
 	let filterService = false;
 	let _disponibilitySelected = $disponibilitySelected;
 	let chatUi = $chatMessages;
 
- //onmount function
- onMount(() => {
-	//console.log('viewer dynamic update' , speckleStreams[idUpdate]);
 	currentDepto.subscribe((v) => {
-		depto = v;
-	});
- });
-
+			depto = v;
+		});
 	function truncateString(str, maxLength) {
 		let truncatedString = '';
 		if (str.length <= maxLength) {
@@ -54,34 +48,6 @@
 		}
 		return truncatedString;
 	}
-	//here we will write the function that filters the viewer elements based on containing a service or not
-	// function viewerFilterByServices(selectedArray) {
-	// 	const selectedArrayKeys = Object.keys(selectedArray);
-	// 	const colors = get(colorValueDisponibility);
-	// 	const activeV = get(speckleViewer).speckleViewer;
-	// 	const _viewerLotes = get(viewerDeptos);
-	// 	if (selectedArrayKeys.length != 0 && get(finishLoading)) {
-	// 		//for each _viewerLotes we need to check Servicios prop and see which of the selected filters are in the array if they are all present select it if not pass it
-	// 		const filteredLotes = _viewerLotes.filter((lote) => {
-	// 			const hasSelectedServices = selectedArrayKeys.every((selectedService) => {
-	// 				return lote.Servicios.includes(selectedService);
-	// 			});
-	// 			//console.log('hasSelectedServices',hasSelectedServices);
-	// 			return hasSelectedServices;
-	// 		});
-	// 		//get the array of ids from the filteredLotes
-	// 		const filteredLotesIds = filteredLotes.map((lote) => lote.id);
-	// 		const dispQueryObject = {
-	// 			objectIds: filteredLotesIds,
-	// 			color: colors.Disponible
-	// 		};
-	// 		activeV.setUserObjectColors([dispQueryObject])
-	// 		//console.log('viewerLotes', filteredLotesIds);
-	// 	}
-	// 	else{
-	// 		resetViewerFilters();
-	// 	}
-	// }
 </script>
 
 {#if show}

@@ -12,7 +12,9 @@
 		disponibilitySelected,
 		currentSelection,
 		chatMessages,
-		finishLoading
+		finishLoading,
+		displayCompositionTable_show,
+		currentColorSet
 	} from '/src/stores/toolStore.js';
 	import {
 		selectElementsByPropNameValue,
@@ -26,7 +28,8 @@
 	// let services = '/icons/bolt.svg';
 	// let chatIcon = '/icons/robot.svg';
 
-	let colorByProperty = '/icons/plan.svg';
+	let colorByProperty = '/icons/color-coded.svg';
+	let planInfo = '/icons/plan.svg';
 	let filterOff = '/icons/filter-off.svg';
 
 	let tempObjectIds = ['ee07ac99d4cfd23c59ef94bda65bdbe0', 'ccb4b5e5bf2ae2bfb1524e62462155d2'];
@@ -62,33 +65,8 @@
 		const ocupados = [];
 		const reservados = [];
 		if (activeV && get(finishLoading)) {
-			const _viewerDeptos = get(viewerDeptos);
-			//get groups of elements ids based on the state property
-			//generate a list of unique deparment "tipologia"
-			//const tipologias = [...new Set(_viewerDeptos.map((depto) => depto.tipologia))];
-			const groupedByTipologia = _viewerDeptos.reduce((acc, depto) => {
-				if (!acc[depto.tipologia]) {
-					acc[depto.tipologia] = [];
-				}
-				acc[depto.tipologia].push(depto.id);
-				return acc;
-			}, {});
-			console.log('tipologias........', groupedByTipologia);
-			let toColorList = []
-			Object.entries(groupedByTipologia).map(([key, value]) => {
-				//console.log("each tipologia", tipologia)
-				const colorQueryObject = {
-					objectIds: value,
-					color: generateRandomColor()
-				};
-				toColorList.push(colorQueryObject)
-			});
-			activeV.setUserObjectColors(toColorList);
-			//activeV.setUserObjectColors([dispQueryObject])
-
-			//need to get all the speckle elements that have the property of passport and filter them
-			//const Selements = selectElementsByPropNameValue(specklePropName,passport.passportID)
-			//console.log("activeV",Selements);
+			const _viewerDeptos = get(currentColorSet);
+			activeV.setUserObjectColors(_viewerDeptos);
 		}
 	}
 	function removeFilterViewer() {
@@ -206,6 +184,16 @@
 		chatMessages.set(welcomM);
 		//return bimbotResponseFiltered;
 	}
+
+	function displayCompositionTable(){
+		//make a switch to show or hide the table
+		if($displayCompositionTable_show){
+			displayCompositionTable_show.set(false)
+		}else{
+		displayCompositionTable_show.set(true)
+		}
+		//update the state for the DisplayCompositionTable compoment
+	}
 </script>
 
 <div class="utility-bar">
@@ -216,6 +204,12 @@
 		toExecute={colorByDepartmentType}
 		active={false}
 		commandName="Color por Tipologia de Departamento"
+	/>
+	<ToolBarButton
+		icon={planInfo}
+		toExecute={displayCompositionTable}
+		active={false}
+		commandName="Composición de Edificio"
 	/>
 	<!-- <ToolBarButton
 		icon={colorBySector}

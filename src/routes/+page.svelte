@@ -12,10 +12,12 @@
 		viewerDeptos,
 		sidebar_show,
 		currentDepto,
-		currentViewerDepto
+		currentViewerDepto,
+		displayCompositionTable_show
 	} from '../stores/toolStore';
 	import UtilityBar from '$lib/components/modelViewer/UtilityBar.svelte';
 	import DonoutKpiChart from '$lib/components/charts/DonoutKpiChart.svelte';
+	import DisplayCompositionTable from '$lib/components/analytics/DisplayCompositionTable.svelte';
 	import Sidebar from '$lib/components/sidebarModal/Sidebar.svelte';
 	import { Jellyfish } from 'svelte-loading-spinners';
 	import { navigating } from '$app/stores';
@@ -42,7 +44,7 @@
 					//console.log(viewerDataIds.includes(selectedElement[0]?.id), viewerDataIds)
 					if (viewerDataIds.includes(selectedElement[0]?.id)) {
 						//console.log('found showing sidebar', selectedElement[0]?.id);
-						_sidebar_show = true;
+						sidebar_show.set(true);
 						const selectedDepto = viewerDeptosData.find(
 							(item) => item.id === selectedElement[0]?.id
 						);
@@ -85,6 +87,7 @@
 	<UtilityBar />
 	<DonoutKpiChart dataProp={'edificio'} tittle="Deptos Por Edificio:" />
 	<Sidebar bind:show={_sidebar_show} />
+	<DisplayCompositionTable />
 {:else}
 	<div class="center-loader">
 		<Jellyfish size="60" color="#FF3E00" unit="px" duration="1.5s" />

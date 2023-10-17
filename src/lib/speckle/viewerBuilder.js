@@ -1,11 +1,12 @@
 import { ViewerEvent } from "@speckle/viewer";
 import { getStreamCommits, getUserData } from "./speckleUtils.js";
 import { get } from "svelte/store";
-import { speckleViewer, finishLoading, speckleStream, speckleDatatree, deptosProps, speckleDeptos, catOfInterest, viewerDeptos } from "../../stores/toolStore";
+import { speckleViewer, finishLoading, speckleStream, speckleDatatree, deptosProps, speckleDeptos, catOfInterest, viewerDeptos, currentColorSet} from "../../stores/toolStore";
 import {
     getPropertiesByTypeParameter,
     filterByCategoryNames,
-    processSpeckleSchedule
+    processSpeckleSchedule,
+    generateRandomColor
 } from "$lib/speckle/speckleHandler";
 
 
@@ -20,11 +21,36 @@ export async function buildViewerData() {
         const scheduleToObject = processScheduleArray(scheduleObject)
         const unifyPropArray = unifyViewerDeptosPropertiesWithSchedule(get(viewerDeptos), scheduleToObject)
         viewerDeptos.set(unifyPropArray)
+        colorsByTipology()
         //console.log("speckleSchedule Object-----",unifyPropArray);
 
     })
     //console.log("lotessss",speckleDT)
 
+}
+//this will build objects to color departments based on type 
+function colorsByTipology() {
+    const _viewerDeptos = get(viewerDeptos);
+    const groupedByTipologia = _viewerDeptos.reduce((acc, depto) => {
+        if (!acc[depto.tipologia]) {
+            acc[depto.tipologia] = [];
+        }
+        acc[depto.tipologia].push(depto.id);
+        return acc;
+    }, {});
+    //console.log('tipologias........', groupedByTipologia);
+    let toColorList = []
+    Object.entries(groupedByTipologia).map(([key, value]) => {
+        //console.log("each tipologia", tipologia)
+        const colorQueryObject = {
+            objectIds: value,
+            color: generateRandomColor(),
+            deptotipologia: key
+        };
+        toColorList.push(colorQueryObject)
+    });
+    currentColorSet.set(toColorList)
+    return toColorList
 }
 //schedule data procesing 
 function processScheduleArray(arr) {
@@ -40,28 +66,28 @@ function processScheduleArray(arr) {
         const obj = {};
         row.forEach((value, index) => {
             const prop = objectProps[index];
-            if ( prop == "Área"){
+            if (prop == "Área") {
                 obj["area"] = value;
             }
-            else if ( prop == "Número"){
+            else if (prop == "Número") {
                 obj["numero"] = value;
             }
-            else if ( prop == "Orientación"){
+            else if (prop == "Orientación") {
                 obj["orientacion"] = value;
             }
-            else if (prop == "ICA - Tipo"){
+            else if (prop == "ICA - Tipo") {
                 obj["icatipo"] = value;
             }
-            else if ( prop == "Comentarios Ventas"){
+            else if (prop == "Comentarios Ventas") {
                 obj["tipologia"] = value;
             }
-            else if (prop  == "Nombre"){
+            else if (prop == "Nombre") {
                 obj["clasificacion"] = value
             }
-            else if (prop  == "Edificio"){
+            else if (prop == "Edificio") {
                 obj["edificio"] = value
             }
-            else{
+            else {
                 obj[prop] = value;
             }
         });
@@ -71,23 +97,23 @@ function processScheduleArray(arr) {
 }
 
 function unifyViewerDeptosPropertiesWithSchedule(_viewerDeptos, _scheduleToObject) {
-    let list1 =_viewerDeptos
+    let list1 = _viewerDeptos
     list1.forEach(item1 => {
-        const correspondingItem2 = _scheduleToObject.find(item2 => 
-          item1.edificio === item2.edificio && item1.numero === item2.numero
+        const correspondingItem2 = _scheduleToObject.find(item2 =>
+            item1.edificio === item2.edificio && item1.numero === item2.numero
         );
-    
+
         if (correspondingItem2) {
-          Object.keys(correspondingItem2).forEach(key => {
-            // Only add the property if it doesn't already exist in item1
-            if (!item1.hasOwnProperty(key)) {
-              item1[key] = correspondingItem2[key];
-            }
-          });
+            Object.keys(correspondingItem2).forEach(key => {
+                // Only add the property if it doesn't already exist in item1
+                if (!item1.hasOwnProperty(key)) {
+                    item1[key] = correspondingItem2[key];
+                }
+            });
         }
-      });
-    
-      return list1;
+    });
+
+    return list1;
 }
 
 //this function builds the speckle base objects in the scene (lotes and protos)
