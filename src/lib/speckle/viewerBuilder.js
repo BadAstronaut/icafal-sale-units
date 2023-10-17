@@ -15,10 +15,16 @@ export async function buildViewerData() {
     const speckleDT = get(speckleDatatree);
     setSpeckleObjects(speckleDT);
     getViewerObjects();
-    console.log("before schedule query ok buildviewerdata ", get(viewerDeptos));
+    //console.log("before schedule query ok buildviewerdata ", get(viewerDeptos));
 
     // Await for the speckleScheduleObject to resolve
-    const scheduleObject = await processSpeckleSchedule();
+    let scheduleObject
+    try{
+        scheduleObject = await processSpeckleSchedule();
+    } catch (e)
+    {
+        console.log("error in schedule query", e)
+    }
     console.log("scheduleObject ok ", scheduleObject);
     const scheduleToObject = processScheduleArray(scheduleObject);
     console.log("scheduleToObject ok ", scheduleToObject);
