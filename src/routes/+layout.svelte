@@ -2,6 +2,14 @@
 	import pico from '@picocss/pico';
 </script>
 
+
+
+<svelte:head>
+    <title>ICAFAL Analytics</title>
+
+</svelte:head>
+
+
 <nav>
 	<!-- add logoCTEC as a a logo in the top left corner of the nav bar -->
 	<img class="logo" src="/logoICAFAL.png" alt="logo Icafal" width="auto" height="auto" />
