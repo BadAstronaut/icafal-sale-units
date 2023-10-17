@@ -21,8 +21,8 @@ export async function buildViewerData() {
         const scheduleToObject = processScheduleArray(scheduleObject)
         const unifyPropArray = unifyViewerDeptosPropertiesWithSchedule(get(viewerDeptos), scheduleToObject)
         viewerDeptos.set(unifyPropArray)
-        colorsByTipology()
-        //console.log("speckleSchedule Object-----",unifyPropArray);
+        const colorByT =  colorsByTipology()
+        console.log("speckleSchedule Object-----",colorByT);
 
     })
     //console.log("lotessss",speckleDT)

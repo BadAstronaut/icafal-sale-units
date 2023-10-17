@@ -1,38 +1,58 @@
 <script>
 	import { fly } from 'svelte/transition';
-    import { onMount } from 'svelte';
-    import { get } from "svelte/store";
-    import {
-        speckleViewer,
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
+	import {
+		speckleViewer,
 		viewerDeptos,
 		finishLoading,
 		displayCompositionTable_show,
-        currentColorSet,
-        sidebar_show
+		currentColorSet,
+		sidebar_show
 	} from '/src/stores/toolStore.js';
 	//import modal
-    import {
-		resetViewerFilters,
-		generateRandomColor
-	} from '/src/lib/speckle/speckleHandler.js';
+	import { resetViewerFilters, generateRandomColor } from '/src/lib/speckle/speckleHandler.js';
 
 	let _displayCompositionTable_show = $displayCompositionTable_show;
 	let closeIcon = '/icons/x.svg';
 	let selectedRow = null;
 
 	async function selectRow(row) {
-        const v = get(speckleViewer).speckleViewer;
+		const v = get(speckleViewer).speckleViewer;
 		selectedRow = row;
-        //console.log('selectedRow', selectedRow);
-        if (selectedRow.tipologia === '2D2B') {
-            //filter currentColorSet to get 2D2B in deptotipologia 
-            const toIsolate = $currentColorSet.filter((item) => item.deptotipologia === '2D2B');
-            await v.resetFilters();
-            v.isolateObjects(toIsolate[0].objectIds);
-            //console.log('Estudio', toIsolate[0].objectIds);
-            return;
-        }
 
+		// Mapping of tipologia to deptotipologia
+		const tipologiaMapping = {
+			'1D1B': '1D1B',
+			'2D2B': '2D2B',
+			'2D1B': '2D1B',
+			'3D2B': '3D2B',
+			"Estudio": ".ESTUDIO",
+
+
+			// Add other mappings as needed
+		};
+
+		const deptotipologia = tipologiaMapping[row.tipologia];
+
+		if (deptotipologia) {
+			const toIsolate = $currentColorSet.filter((item) => item.deptotipologia === deptotipologia);
+			await v.resetFilters();
+			v.isolateObjects(toIsolate[0].objectIds);
+			// If you want to log the objectIds, uncomment the following line
+			// console.log(deptotipologia, toIsolate[0].objectIds);
+		} 
+		else if (row.tipologia === 'Total') {
+			// Reset filters
+			await v.resetFilters();
+			//isolate all elements in currentColorSets 
+			const toIsolate = $currentColorSet.map((item) => item.objectIds);
+			v.isolateObjects(toIsolate.flat());
+		}
+		else {
+			// Handle cases where row.tipologia doesn't match any known values
+			console.error('Unknown tipologia:', row.tipologia);
+		}
 	}
 
 	let data = [
@@ -54,8 +74,8 @@
 		}
 	];
 	displayCompositionTable_show.subscribe((v) => {
-        sidebar_show.set(false);
-        console.log('displayCompositionTable_show', $sidebar_show);
+		sidebar_show.set(false);
+		console.log('displayCompositionTable_show', $sidebar_show);
 		_displayCompositionTable_show = v;
 	});
 
@@ -77,7 +97,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th class="main-header" colspan="2" />
+					<th class="main-header" colspan="2"> Orientación </th>
 					<th class="main-header" colspan="6" style="background-color:gainsboro"
 						>Cantidad de Deptos.</th
 					>
@@ -119,6 +139,10 @@
 	table tbody tr:last-child {
 		font-weight: 600 !important;
 	}
+	table tbody tr:hover {
+		cursor: pointer;
+		background-color: rgba(220, 220, 220, 0.2);
+	}
 	.row-total {
 		font-weight: 600;
 	}
@@ -149,7 +173,7 @@
 		height: 80%;
 		margin: 0;
 		padding: 0;
-        z-index: 1000;
+		z-index: 1000;
 	}
 
 	th,
@@ -162,7 +186,6 @@
 	}
 
 	th {
-		background-color: white;
 		text-align: left;
 	}
 	.close-button {
@@ -177,7 +200,7 @@
 		width: 15px;
 	}
 	tr.selected {
-		background-color:rgb(255, 203, 159, 20%); /* Example color (light gold) */
+		background-color: rgb(255, 203, 159, 20%); /* Example color (light gold) */
 	}
 
 	.composition-table {

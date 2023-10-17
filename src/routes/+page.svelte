@@ -19,6 +19,7 @@
 	import DonoutKpiChart from '$lib/components/charts/DonoutKpiChart.svelte';
 	import DisplayCompositionTable from '$lib/components/analytics/DisplayCompositionTable.svelte';
 	import Sidebar from '$lib/components/sidebarModal/Sidebar.svelte';
+	import MobileWarning from '../lib/components/MobileWarning.svelte';
 	import { Jellyfish } from 'svelte-loading-spinners';
 	import { navigating } from '$app/stores';
 	export let data;
@@ -80,7 +81,7 @@
 		_sidebar_show = v;
 	});
 </script>
-
+<MobileWarning></MobileWarning>
 <SpeckleViewer _speckleStream={$speckleStream} />
 
 {#if loadCompleted}
