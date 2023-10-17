@@ -15,6 +15,8 @@ export async function buildViewerData() {
     const speckleDT = get(speckleDatatree);
     setSpeckleObjects(speckleDT);
     getViewerObjects();
+    console.log("before schedule query ok buildviewerdata ", get(viewerDeptos));
+
     // Await for the speckleScheduleObject to resolve
     const scheduleObject = await processSpeckleSchedule();
     console.log("scheduleObject ok ", scheduleObject);
