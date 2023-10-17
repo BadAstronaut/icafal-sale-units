@@ -180,47 +180,37 @@ export async function resetViewerFilters() {
   }
 }
 
-export async function reloadViewerGetObjectsByIds(
-  viewerI,
-  speckleStream,
-  ids,
-  scheduleStram,
-) {
-  const stm = fetchStreamData;
+export async function reloadViewerGetObjectsByIds(viewerI, speckleStream, ids, scheduleStram) {
   const v = viewerI;
-  console.log("currentT", token);
+
   const branch = await fetchStreamData(speckleStream);
   const scheduleBranch = await fetchStreamData(scheduleStram);
+
   console.log("branch in reloadv----", speckleStream, scheduleStram, scheduleBranch);
   await v.unloadAll();
+
   if (branch) {
-    const obj = objUrl(speckleStream, branch.commits.items[0].referencedObject);
-    //console.log("obj", obj);
-    // get schedule 
-    //const schedule = objUrl(scheduleStram, scheduleBranch.commits.items[0].referencedObject);
-    //console.log("obj Schedule", schedule);
+      const obj = objUrl(speckleStream, branch.commits.items[0].referencedObject);
+      
+      await v.loadObject(obj, token);
 
-    await v.loadObject(obj, token);
-
-    v.zoom(0.7);
-
-    await v.init();
-    let p = Promise.resolve(v);
-    p.then(() => {
-      speckleViewer.set({ 'speckleViewer': v })
+      v.zoom(0.7);
+      await v.init();
+      
+      speckleViewer.set({ 'speckleViewer': v });
       speckleDatatree.set(v.getDataTree());
-      buildViewerData();
+      
+      await buildViewerData();
+      
       finishLoading.set(true);
-    })
-    const speckObjects = v.getDataTree();
-    const objects = "ok"
-    return speckObjects;
+
+      const speckObjects = v.getDataTree();
+      return speckObjects;
   } else {
-    return null;
+      return null;
   }
-
-
 }
+
 
 export async function processSpeckleSchedule(objectId = "b6bc2de8c6e1a8412587e561f8d07d8b") {
   const streamSchedule = await getStreamObjects(get(speckleSchedule), token, objectId);
