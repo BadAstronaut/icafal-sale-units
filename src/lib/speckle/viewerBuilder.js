@@ -12,20 +12,17 @@ import {
 
 
 export async function buildViewerData() {
-    const speckleDT = get(speckleDatatree)
-    setSpeckleObjects(speckleDT)
-    getViewerObjects()
-    const speckleScheduleObject = processSpeckleSchedule()
-    //console.log("speckleSchedule Object-----", speckleScheduleObject);
-    speckleScheduleObject.then((scheduleObject) => {
-        const scheduleToObject = processScheduleArray(scheduleObject)
-        const unifyPropArray = unifyViewerDeptosPropertiesWithSchedule(get(viewerDeptos), scheduleToObject)
-        viewerDeptos.set(unifyPropArray)
-        const colorByT =  colorsByTipology()
-        console.log("speckleSchedule Object-----",colorByT);
+    const speckleDT = get(speckleDatatree);
+    setSpeckleObjects(speckleDT);
+    getViewerObjects();
 
-    })
-    //console.log("lotessss",speckleDT)
+    // Await for the speckleScheduleObject to resolve
+    const scheduleObject = await processSpeckleSchedule();
+    const scheduleToObject = processScheduleArray(scheduleObject);
+    const unifyPropArray = unifyViewerDeptosPropertiesWithSchedule(get(viewerDeptos), scheduleToObject);
+    viewerDeptos.set(unifyPropArray);
+    const colorByT = colorsByTipology();
+    console.log("speckleSchedule Object-----", colorByT);
 
 }
 //this will build objects to color departments based on type 

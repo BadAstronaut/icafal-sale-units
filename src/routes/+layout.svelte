@@ -6,6 +6,7 @@
 
 <svelte:head>
     <title>ICAFAL Analytics</title>
+	<link rel="icon" href="/icons/building.svg" type="image/svg+xml">
 
 </svelte:head>
 
