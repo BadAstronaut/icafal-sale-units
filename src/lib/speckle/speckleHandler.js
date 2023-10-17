@@ -166,7 +166,7 @@ export function selectElementsByPropNameValue(propNAme, propValue) {
 export function generateRandomColor() {
   const getRandomByte = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
   const _color = `0x${getRandomByte()}${getRandomByte()}${getRandomByte()}`;
-  console.log("coliring",_color);
+  console.log("coliring", _color);
   let hexNumber = parseInt(_color, 16);
   let color = new THREE.Color(hexNumber);
   return color;
@@ -190,25 +190,30 @@ export async function reloadViewerGetObjectsByIds(viewerI, speckleStream, ids, s
   await v.unloadAll();
 
   if (branch) {
-      const obj = objUrl(speckleStream, branch.commits.items[0].referencedObject);
-      
-      await v.loadObject(obj, token);
+    const obj = objUrl(speckleStream, branch.commits.items[0].referencedObject);
 
-      v.zoom(0.7);
-      await v.init();
-      
-      speckleViewer.set({ 'speckleViewer': v });
-      speckleDatatree.set(v.getDataTree());
-      console.log("speckleViewer and data tree set", get(speckleDatatree));
+    await v.loadObject(obj, token);
+
+    v.zoom(0.7);
+    await v.init();
+
+    speckleViewer.set({ 'speckleViewer': v });
+    speckleDatatree.set(v.getDataTree());
+    console.log("speckleViewer and data tree set", get(speckleDatatree));
+    try {
       await buildViewerData();
-  
-      const speckObjects = v.getDataTree();
-      finishLoading.set(true);
-      console.log("speckleViewer after data build");
 
-      return speckObjects;
+    } catch (error) {
+      console.error('Error in buildViewerData:', error);
+    }
+
+    const speckObjects = v.getDataTree();
+    finishLoading.set(true);
+    console.log("speckleViewer after data build");
+
+    return speckObjects;
   } else {
-      return null;
+    return null;
   }
 }
 
