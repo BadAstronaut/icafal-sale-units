@@ -64,6 +64,7 @@
 		const disponibles = [];
 		const ocupados = [];
 		const reservados = [];
+		console.log ('activeV from color by type', activeV, get(currentColorSet));
 		if (activeV && get(finishLoading)) {
 			const _viewerDeptos = get(currentColorSet);
 			activeV.setUserObjectColors(_viewerDeptos);
