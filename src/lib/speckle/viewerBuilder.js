@@ -15,7 +15,6 @@ export async function buildViewerData() {
     const speckleDT = get(speckleDatatree);
     setSpeckleObjects(speckleDT);
     getViewerObjects();
-
     // Await for the speckleScheduleObject to resolve
     const scheduleObject = await processSpeckleSchedule();
     const scheduleToObject = processScheduleArray(scheduleObject);
