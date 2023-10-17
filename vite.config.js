@@ -1,8 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import process  from "process";
 import { defineConfig } from 'vite'
-import { Server } from 'socket.io'
-let io ;
 // const config = {
 // 	plugins: [sveltekit()],
 // 	resolve: {
@@ -33,5 +31,4 @@ export default defineConfig({
 	  },
 })
 
-export {io};
 //export default config;
