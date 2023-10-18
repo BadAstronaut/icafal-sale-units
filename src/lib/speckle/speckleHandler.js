@@ -225,6 +225,8 @@ export async function processSpeckleSchedule(objectId = "b6bc2de8c6e1a8412587e56
     streamSchedule= await getStreamObjects(get(speckleSchedule), token, objectId);
   }
   catch (error) {
+    console.log("error fetching schedule data", get(speckleSchedule), token, objectId)
+    console.log("error fetching schedule data", error, streamSchedule );
     console.log("error fetching schedule data", error, streamSchedule );
   }
   //getting the schedule data
