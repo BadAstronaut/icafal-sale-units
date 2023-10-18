@@ -18,7 +18,7 @@ export async function getStreamObjects(streamId, token, objectId) {
       serverUrl: SERVER_URL,
       streamId: streamId,
       objectId: objectId,
-      options: { enableCaching: true, excludeProps: [], fetch }
+      options: { enableCaching: true, fullyTraverseArrays: false, excludeProps: []}
     })
     
     //let obj = await loader.getAndConstructObject((e) => console.log('Progress', e))

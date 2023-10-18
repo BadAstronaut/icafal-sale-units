@@ -199,7 +199,7 @@ export async function reloadViewerGetObjectsByIds(viewerI, speckleStream, ids, s
 
     speckleViewer.set({ 'speckleViewer': v });
     speckleDatatree.set(v.getDataTree());
-    console.log("speckleViewer and data tree set", get(speckleDatatree));
+    //console.log("speckleViewer and data tree set", get(speckleDatatree));
     try {
       await buildViewerData();
 
@@ -209,7 +209,7 @@ export async function reloadViewerGetObjectsByIds(viewerI, speckleStream, ids, s
 
     const speckObjects = v.getDataTree();
     finishLoading.set(true);
-    console.log("speckleViewer after data build");
+    //console.log("speckleViewer after data build");
 
     return speckObjects;
   } else {
@@ -225,12 +225,12 @@ export async function processSpeckleSchedule(objectId = "b6bc2de8c6e1a8412587e56
     streamSchedule= await getStreamObjects(get(speckleSchedule), token, objectId);
   }
   catch (error) {
-    console.log("error fetching schedule data", get(speckleSchedule), token, objectId)
-    console.log("error fetching schedule data", error, streamSchedule );
-    console.log("error fetching schedule data", error, streamSchedule );
+    //console.log("error fetching schedule data", get(speckleSchedule), token, objectId)
+    //console.log("error fetching schedule data", error, streamSchedule );
+    //console.log("error fetching schedule data", error, streamSchedule );
   }
   //getting the schedule data
-  console.log("schedule data", streamSchedule);
+  //console.log("schedule data", streamSchedule);
   return streamSchedule;
 
 }

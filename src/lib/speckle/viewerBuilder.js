@@ -25,13 +25,13 @@ export async function buildViewerData() {
     {
         console.log("error in schedule query", e)
     }
-    console.log("scheduleObject ok ", scheduleObject);
+    //console.log("scheduleObject ok ", scheduleObject);
     const scheduleToObject = processScheduleArray(scheduleObject);
-    console.log("scheduleToObject ok ", scheduleToObject);
+    //console.log("scheduleToObject ok ", scheduleToObject);
     const unifyPropArray = unifyViewerDeptosPropertiesWithSchedule(get(viewerDeptos), scheduleToObject);
     viewerDeptos.set(unifyPropArray);
     const colorByT = colorsByTipology();
-    console.log("speckleSchedule Object-----", colorByT);
+    //console.log("speckleSchedule Object-----", colorByT);
 
 }
 //this will build objects to color departments based on type 
