@@ -12,13 +12,18 @@ export async function getStreamObjects(streamId,token, objectId) {
   const loader = new ObjectLoader( { SERVER_URL, token, streamId, objectId } )
   let total = null
   let count = 0
-  console.log("loader speckle uils getstreamobjects ", loaderstreamId,token, objectId, loader)
-  //get first value out of the iterator
-  const first = await loader.getObjectIterator().next()
-  console.log("first value from data table ", first)
-  if (first.value) {
-    return first.value.data
+  try{
+    console.log("loader speckle uils getstreamobjects ", loaderstreamId,token, objectId, loader)
+    //get first value out of the iterator
+    const first = await loader.getObjectIterator().next()
+    console.log("first value from data table ", first)
+    if (first.value) {
+      return first.value.data
+    }
+  }catch (e){
+    console.log("error in getstreamobjects ", e)
   }
+  
 }
 // Calls the GraphQL endpoint of the Speckle server with a specific query.
 export async function speckleFetch(query, token) {
