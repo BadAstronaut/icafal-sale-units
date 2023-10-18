@@ -1,9 +1,11 @@
 import ObjectLoader from '@speckle/objectloader';
+import fetch from 'cross-fetch'
 import {
   streamCommitsQuery,
   streamSearchQuery,
   userInfoQuery
 } from "./speckleQueries.js"
+
 
 export let SERVER_URL = "https://speckle.xyz"
 
@@ -11,9 +13,17 @@ export let SERVER_URL = "https://speckle.xyz"
 export async function getStreamObjects(streamId, token, objectId) {
 
   try {
-    console.log("loader speckle uils getstreamobjects ", token, objectId, streamId)
-    const loader = new ObjectLoader({ SERVER_URL, token, streamId, objectId })
-    console.log("loader speckle uils getstreamobjects ", loader)
+    //console.log("loader speckle uils getstreamobjects ", token, objectId, streamId,)
+    let loader = new ObjectLoader({
+      serverUrl: SERVER_URL,
+      streamId: streamId,
+      objectId: objectId,
+      options: { enableCaching: true, excludeProps: [], fetch }
+    })
+    
+    //let obj = await loader.getAndConstructObject((e) => console.log('Progress', e))
+
+    console.log("loader speckle uils getstreamobjects............... ", loader)
     let total = null
     let count = 0
     //get first value out of the iterator
