@@ -12,6 +12,7 @@ export async function getStreamObjects(streamId,token, objectId) {
   const loader = new ObjectLoader( { SERVER_URL, token, streamId, objectId } )
   let total = null
   let count = 0
+  console.log("loader speckle uils getstreamobjects ", loaderstreamId,token, objectId, loader)
   //get first value out of the iterator
   const first = await loader.getObjectIterator().next()
   console.log("first value from data table ", first)
