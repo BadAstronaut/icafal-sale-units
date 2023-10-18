@@ -21,9 +21,6 @@ export async function getStreamObjects(streamId, token, objectId) {
       objectId: objectId,
       options: { enableCaching: false, fullyTraverseArrays: false, excludeProps: []}
     })
-    
-    //let obj = await loader.getAndConstructObject((e) => console.log('Progress', e))
-
     console.log("loader speckle uils getstreamobjects............... ", loader)
     let total = null
     let count = 0

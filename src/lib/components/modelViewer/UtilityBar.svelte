@@ -14,6 +14,7 @@
 		chatMessages,
 		finishLoading,
 		displayCompositionTable_show,
+		displayOrientationAnalytics_show,
 		currentColorSet
 	} from '/src/stores/toolStore.js';
 	import {
@@ -25,7 +26,7 @@
 	let setTopView = '/icons/top.svg';
 	let colorBySector = '/icons/brand-google-maps.svg';
 	let homeView = '/icons/home-2.svg';
-	// let services = '/icons/bolt.svg';
+	let services = '/icons/bolt.svg';
 	// let chatIcon = '/icons/robot.svg';
 
 	let colorByProperty = '/icons/color-coded.svg';
@@ -195,6 +196,15 @@
 		}
 		//update the state for the DisplayCompositionTable compoment
 	}
+	function displayOrientationAnalytics(){
+		//make a switch to show or hide the table
+		if($displayOrientationAnalytics_show){
+			displayOrientationAnalytics_show.set(false)
+		}else{
+			displayOrientationAnalytics_show.set(true)
+		}
+		//update the state for the DisplayCompositionTable compoment
+	}
 </script>
 
 <div class="utility-bar">
@@ -211,6 +221,12 @@
 		toExecute={displayCompositionTable}
 		active={false}
 		commandName="Composición de Edificio"
+	/>
+	<ToolBarButton
+		icon={services}
+		toExecute={displayOrientationAnalytics}
+		active={false}
+		commandName="Analitica por orientación"
 	/>
 	<!-- <ToolBarButton
 		icon={colorBySector}

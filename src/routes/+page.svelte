@@ -18,6 +18,7 @@
 	import UtilityBar from '$lib/components/modelViewer/UtilityBar.svelte';
 	import DonoutKpiChart from '$lib/components/charts/DonoutKpiChart.svelte';
 	import DisplayCompositionTable from '$lib/components/analytics/DisplayCompositionTable.svelte';
+	import DepartamentosOrientacionTable from '../lib/components/analytics/DepartamentosOrientacionTable.svelte';
 	import Sidebar from '$lib/components/sidebarModal/Sidebar.svelte';
 	import MobileWarning from '../lib/components/MobileWarning.svelte';
 	import { Jellyfish } from 'svelte-loading-spinners';
@@ -89,6 +90,7 @@
 	<DonoutKpiChart dataProp={'edificio'} tittle="Deptos Por Edificio:" />
 	<Sidebar bind:show={_sidebar_show} />
 	<DisplayCompositionTable />
+	<DepartamentosOrientacionTable />
 {:else}
 	<div class="center-loader">
 		<Jellyfish size="60" color="#FF3E00" unit="px" duration="1.5s" />

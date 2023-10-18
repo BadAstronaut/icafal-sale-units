@@ -89,7 +89,6 @@
 {#if $displayCompositionTable_show}
 	<nav class="composition-table" transition:fly={{ x: 250, opacity: 1 }}>
 		<div class="component-head">
-			<p class="title-text">Tabla de Composición de Departamentos</p>
 			<button class="close-button" on:click={() => displayCompositionTable_show.set(false)}>
 				<img src={closeIcon} alt="x" />
 			</button>
@@ -97,14 +96,14 @@
 		<table>
 			<thead>
 				<tr>
-					<th class="main-header" colspan="2"> Orientación </th>
+					<th class="main-header" colspan="2"> </th>
 					<th class="main-header" colspan="6" style="background-color:gainsboro"
 						>Cantidad de Deptos.</th
 					>
 				</tr>
 				<tr>
 					<th />
-					<th>Tipologia</th>
+					<th>Orientación</th>
 					<th>N</th>
 					<th>O</th>
 					<th>P</th>

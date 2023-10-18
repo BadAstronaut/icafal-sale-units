@@ -56,6 +56,8 @@ export const sidebar_show = writable(false)
 
 export const displayCompositionTable_show = writable(false)
 
+export const displayOrientationAnalytics_show = writable(false)
+
 export const showModal = writable(false)
 
 export const colorValueDisponibility = writable({
