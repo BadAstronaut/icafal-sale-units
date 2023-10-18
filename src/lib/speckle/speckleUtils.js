@@ -13,6 +13,7 @@ export async function getStreamObjects(streamId, token, objectId) {
   try {
     console.log("loader speckle uils getstreamobjects ", token, objectId, streamId)
     const loader = new ObjectLoader({ SERVER_URL, token, streamId, objectId })
+    console.log("loader speckle uils getstreamobjects ", loader)
     let total = null
     let count = 0
     //get first value out of the iterator

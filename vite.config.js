@@ -27,6 +27,7 @@ export default defineConfig({
 		noExternal: [
 		  // Add the npm package that contains invalid code here
 		  '@speckle/viewer',
+		  '@speckle/objectloader', 
 		],
 	  },
 })
