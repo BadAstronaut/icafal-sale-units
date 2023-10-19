@@ -34,7 +34,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border: 1px solid lightgray;
+		border: 0.1px solid	 lightgray;
 		width: 4em;
 		height: 1.2em;
 		overflow: hidden; /* Ensure content doesn't spill out */
@@ -51,10 +51,14 @@
 	.circle {
 		width: 10px;
 		height: 10px;
-        border: 1.5px solid lightgray;
+		border: 1.5px solid lightgray;
 		border-radius: 50%;
 		background-color: var(--circle-color);
 		margin: 5px;
 		margin-right: 10px;
+		/* https://smoothshadows.com/#djEsMSw1LDAuMDgsMjQsMzIsMCwjMDMwNzEyLCNmM2Y0ZjYsI2ZmZmZmZiwy */
+		/* https://smoothshadows.com/#djEsMSwzLDAuNDQsMzQsMzIsMCwjMDMwNzEyLCNmM2Y0ZjYsI2ZmZmZmZiwy */
+		box-shadow: 0px 4px 4px rgba(3, 7, 18, 0.15), 0px 14px 15px rgba(3, 7, 18, 0.29),
+			0px 32px 34px rgba(3, 7, 18, 0.44);
 	}
 </style>
