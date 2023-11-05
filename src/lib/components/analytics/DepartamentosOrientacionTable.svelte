@@ -13,10 +13,91 @@
 	} from '/src/stores/toolStore.js';
 	//import modal
 	import { resetViewerFilters, generateRandomColor } from '/src/lib/speckle/speckleHandler.js';
-
+	import MultiSelect from '$lib/components/sidebarModal/MultiSelect.svelte';
 	let _displayOrientationAnalytics_show = $displayOrientationAnalytics_show;
 	let closeIcon = '/icons/x.svg';
 	let selectedRow = null;
+	let _viewerDeptos = null;
+	let uniqueOrientations = [];
+	let sortedKeys = [];
+	let sortedValues = [];
+	let fullGroupedDeptos = null;
+	let selectedOrientationValues = [];
+
+	//on mount get data from viewerDeptos
+	onMount(async () => {
+		_viewerDeptos = viewerDeptosToOrientationTable($viewerDeptos);
+		fullGroupedDeptos = groupByOrientationTowerAndFloor(_viewerDeptos);
+		[sortedKeys, sortedValues] = convertObjectToListOrdered(fullGroupedDeptos.P.B);
+		uniqueOrientations = Object.keys(fullGroupedDeptos);
+
+		console.log('viewerDeptos..............', sortedKeys);
+	});
+
+	//function to group _viewerDeptos by orientation using unique values of orientation
+	function groupByOrientationTowerAndFloor(deptos) {
+		// Helper function to extract floor from icatipo and get tower from edificio
+		const extractFloorAndTower = (depto) => {
+			const tower = depto.edificio || 'Unknown'; // Get tower from edificio property
+			const floor = depto.icatipo ? depto.icatipo.split('.')[1] || 'Unknown' : 'Unknown'; // Extract floor from icatipo
+			return { tower, floor };
+		};
+
+		// First group by orientation
+		let groupedByOrientation = deptos.reduce((acc, depto) => {
+			const orientation = depto.orientacion || 'Unknown'; // Default for undefined orientation
+			if (!acc[orientation]) {
+				acc[orientation] = {};
+			}
+			const { tower, floor } = extractFloorAndTower(depto);
+			if (!acc[orientation][tower]) {
+				acc[orientation][tower] = {};
+			}
+			if (!acc[orientation][tower][floor]) {
+				acc[orientation][tower][floor] = [];
+			}
+			acc[orientation][tower][floor].push(depto);
+			return acc;
+		}, {});
+
+		// Now sort each floor group by numero within each tower
+		Object.keys(groupedByOrientation).forEach((orientation) => {
+			Object.keys(groupedByOrientation[orientation]).forEach((tower) => {
+				Object.keys(groupedByOrientation[orientation][tower]).forEach((floor) => {
+					groupedByOrientation[orientation][tower][floor].sort((a, b) => a.numero - b.numero);
+				});
+			});
+		});
+
+		return groupedByOrientation;
+	}
+	//modify this function to sort by icatipo which combines the tower and floor
+	function viewerDeptosToOrientationTable(vdeptos) {
+		let data = [];
+		console.log('vdeptos', vdeptos);
+		vdeptos.forEach((depto) => {
+			priceStateFaker(depto);
+			//console.log('depto', depto.icatipo);
+			data.push(depto);
+		});
+		return data;
+	}
+	function convertObjectToListOrdered(obj) {
+		const sortedKeys = Object.keys(obj).sort().reverse();
+		const valuesArray = sortedKeys.map((key) => obj[key]);
+		//console.log(sortedKeys, valuesArray); // Add this line to check the output
+		return [sortedKeys, valuesArray];
+	}
+
+	function priceStateFaker(depto) {
+		const baseStates = ['disponible', 'reservado', 'nodisponible'];
+		const priceRange = [69, 100];
+		let price = Math.floor(Math.random() * (priceRange[1] - priceRange[0] + 1) + priceRange[0]);
+		let state = baseStates[Math.floor(Math.random() * baseStates.length)];
+		//add properties to depto
+		depto.precio = price;
+		depto.estado = state;
+	}
 
 	async function selectRow(row) {
 		const v = get(speckleViewer).speckleViewer;
@@ -51,70 +132,40 @@
 			console.error('Unknown tipologia:', row.tipologia);
 		}
 	}
-	//data mock
-	let baseDeptos = [
-		{
-			numero: '101',
-			precio: 100,
-			area: 100,
-			tipologia: '1D1B',
-			estado: 'reservado',
-			orientacion: 'n'
-		},
-		{
-			numero: '103',
-			precio: 66,
-			area: 110,
-			tipologia: '2D1B',
-			estado: 'disponible',
-			orientacion: 'n'
-		},
-		{
-			numero: '105',
-			precio: 72,
-			area: 112,
-			tipologia: '3D2B',
-			estado: 'disponible',
-			orientacion: 'n'
-		},
-		{
-			numero: '107',
-			precio: 68,
-			area: 115,
-			tipologia: '2D2B',
-			estado: 'reservado',
-			orientacion: 'no'
-		},
-		{
-			numero: '108',
-			precio: 73,
-			area: 116,
-			tipologia: '2D1B',
-			estado: 'nodisponible',
-			orientacion: 'n'
-		},
-		{
-			numero: '109',
-			precio: 70,
-			area: 117,
-			tipologia: '3D2B',
-			estado: 'disponible',
-			orientacion: 'n'
-		}
-	];
 
-	let data = [];
+	function onMultiSelectChange(e) {
+		console.log(e, 'placehorlder changed');
+		//filter fullGroupedDeptos based on 2 which comes as object {P:{value:"P", name:"P"}, B:{value:"B", name:"B"}
+		//iterate over e props and check if index in fullGroupedDeptos exists, if so save it
+		let filteredGroupedDeptos = {};
+		Object.keys(e).forEach((key) => {
+			if (fullGroupedDeptos[key]) {
+				filteredGroupedDeptos[key] = fullGroupedDeptos[key];
+			}
+		});
+		selectedOrientationValues = processOrientationSelection(filteredGroupedDeptos);
+		//console.log(filteredGroupedDeptos, 'filteredGroupedDeptos');
+	}
 
-	for (let i = 11; i >= 1; i--) {
-		let nivelData = {
-			nivel: i.toString(),
-			orientacion: 'N',
-			deptos: baseDeptos.map((depto) => ({
-				...depto,
-				numero: (i * 100 + (parseInt(depto.numero) % 100)).toString()
-			}))
-		};
-		data.push(nivelData);
+	//will need to create a function to flatten the object from multiselect
+	function processOrientationSelection(selectionObject) {
+		// Initialize an empty array to hold the result
+		let combinedSelectionArray = [];
+		Object.keys(selectionObject).forEach((orientation) => {
+			// Get the towers within this orientation
+			const towers = selectionObject[orientation];
+			console.log(towers, 'towers');
+			Object.keys(towers).forEach((tower) => {
+				const combinedKey = `${orientation}_${tower}`;
+				// Get all departments in this tower
+				const _tower = towers[tower];
+				// Create a new object with the combined key and departments
+				//const combinedObject = convertObjectToListOrdered(departments)
+				combinedSelectionArray.push({ [combinedKey]: _tower });
+			});
+		});
+		console.log(combinedSelectionArray, 'combinedSelectionArray');
+		return combinedSelectionArray;
 	}
 
 	//end data mock
@@ -124,67 +175,134 @@
 		console.log('displayCompositionTable_show', $sidebar_show);
 		_displayOrientationAnalytics_show = v;
 	});
-
-	// Convert 0x format to # format for CSS
-	// data = data.map((item) => ({
-	// 	...item,
-	// 	color: `#${item.color.toString(16)}`
-	// }));
-    console.log("data",data);
 </script>
 
 {#if $displayOrientationAnalytics_show}
 	<nav class="orientation-analytics" transition:fly={{ x: 250, opacity: 1 }}>
 		<div class="component-head">
-			<p class="title-text">Orientación: {data[0].orientacion}</p>
+			<p class="title-text">Orientación:</p>
+			<MultiSelect
+				id="selectOrientation"
+				value[0]
+				placeholder="Select Orientation"
+				onChange={onMultiSelectChange}
+			>
+				{#each uniqueOrientations as orientation}
+					{#if orientation}
+						<option value={orientation}>{orientation}</option>
+					{/if}
+				{/each}
+			</MultiSelect>
 			<button class="close-button" on:click={() => displayOrientationAnalytics_show.set(false)}>
 				<img src={closeIcon} alt="x" />
 			</button>
 		</div>
-		<div class="orientation-table-div">
-			{#each data as nivel}
+		{#if selectedOrientationValues.length > 0}
+			<div class="orientation-table-group">
+				{#each selectedOrientationValues as towerGroup}
+					<div class="orientation-group">
+						{#each Object.entries(towerGroup) as [towerKey, floors]}
+						<p class="tower-key-p">Elevación_Torre: {towerKey}</p>
+						{#each Object.entries(floors) as [floorKey, departments]}
+							<div class="table-row-container">
+								<p class="nivel-p">{floorKey}</p>
+								<div class="orientation-row-div">
+									{#each departments as depto}
+										<CellOrientacionTable
+											numero={depto.numero}
+											precio={depto.precio}
+											tipologia={depto.tipologia}
+											estado={depto.estado}
+											id={depto.id}
+											orientacion={depto.orientacion}
+										/>
+									{/each}
+								</div>
+							</div>
+						{/each}
+					{/each}
+					</div>
+					
+				{/each}
+			</div>
+		{/if}
+		<!-- <div class="orientation-table-div">
+			{#each sortedKeys as key, index}
 				<div class="table-row-container">
-					<p class="nivel-p">{nivel.nivel}</p>
+					<p class="nivel-p">{key}</p>
 					<div class="orientation-row-div">
-						{#each nivel.deptos as depto}
+						{#each sortedValues[index] as depto}
 							<CellOrientacionTable
 								numero={depto.numero}
 								precio={depto.precio}
 								tipologia={depto.tipologia}
 								estado={depto.estado}
+								id={depto.id}
 								orientacion={depto.orientacion}
 							/>
 						{/each}
 					</div>
 				</div>
 			{/each}
-		</div>
+		</div> -->
 	</nav>
 {/if}
 
 <style>
-    .table-row-container{
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        margin: 0;
-        padding: 0;
-        gap: 0rem;
-    }
-	.nivel-p {
-		font-size: 1.1rem;
+	.orientation-group{
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		margin: 0;
+		padding: 5px;
+		gap: 0rem;
+		border : 1px solid ;
+		border-radius: 10px;
+		width: 100%;
+	}
+	.tower-key-p{
+		font-size: 1rem;
 		font-weight: 500;
-        line-height: 1;
+		line-height: 1;
 		margin: 0;
 		padding-right: 15px;
-        width: 2rem;
+		padding-top:10px;
+		padding-bottom:5px;
+		width: 100%;
+	}
+	.orientation-table-group {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		margin: 0;
+		padding: 0;
+		gap: 0.5rem;
+	}
+	.table-row-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+		margin: 0;
+		padding: 0;
+		gap: 0rem;
+	}
+	.nivel-p {
+		font-size: 1rem;
+		font-weight: 500;
+		line-height: 1;
+		margin: 0;
+		padding-right: 15px;
+		width: 4rem;
 	}
 	.component-head {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
+		gap:5px;
 		margin-top: 5px;
 		height: 1rem;
 	}
@@ -217,8 +335,8 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-        margin: 0;
-        padding: 0;
+		margin: 0;
+		padding: 0;
 		gap: 0rem;
 	}
 

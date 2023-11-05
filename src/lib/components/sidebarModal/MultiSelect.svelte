@@ -26,13 +26,14 @@
       });
       value && (selected = options.reduce((obj, op) => value.includes(op.value) ? {...obj, [op.value]: op} : obj, {}));
       first = false;
-      //console.log ("loaaading", selected)
+      console.log ("loaaading", selected,value,options)
     });
   
     $: if (!first) value = Object.values(selected).map(o => o.value);
     $: filtered = options.filter(o => inputValue ? o.name.toLowerCase().includes(inputValue.toLowerCase()) : o);
     $: if (activeOption && !filtered.includes(activeOption) || !activeOption && inputValue) activeOption = filtered[0];
   
+    
   
     function add(token) {
       if (!readonly) selected[token.value] = token;
@@ -105,6 +106,45 @@
     }
   </script>
   
+  <div class="multiselect" class:readonly>
+    <div class="tokens" class:showOptions on:click={handleTokenClick}>
+      {#each Object.values(selected) as s}
+        <div class="token" data-id="{s.value}">
+          <span>{s.name}</span>
+          {#if !readonly}
+            <div class="token-remove" title="Remove {s.name}">
+              <svg class="icon-clear" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                <path d="{iconClearPath}"/>
+              </svg>
+            </div>
+          {/if}
+        </div>
+      {/each}
+      <div class="actions">
+        {#if !readonly}
+          <input id={id} autocomplete="off" bind:value={inputValue} bind:this={input} on:keyup={handleKeyup} on:blur={handleBlur} placeholder={placeholder}/>
+          <div class="remove-all" title="Remove All" class:hidden={!Object.keys(selected).length}>
+            <svg class="icon-clear" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+              <path d="{iconClearPath}"/>
+            </svg>
+          </div>
+          <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M5 8l4 4 4-4z"></path></svg>
+        {/if}
+      </div>
+    </div>
+  
+    <select bind:this={slot} type="multiple" class="hidden"><slot></slot></select>
+    
+    {#if showOptions}
+      <ul class="options" transition:fly="{{duration: 200, y: 5}}" on:mousedown|preventDefault={handleOptionMousedown}>
+        {#each filtered as option}
+          <li class:selected={selected[option.value]} class:active={activeOption === option} data-value="{option.value}">{option.name}</li>
+        {/each}
+      </ul>
+    {/if}
+  </div>
+
+  
   <style>
     .multiselect {
       background-color: transparent;
@@ -141,10 +181,10 @@
     .token {
       align-items: center;
       background-color: hsl(214, 17%, 92%);
-      border-radius: 1.25rem;
+      border-radius: 1rem;
       display: flex;
       margin: .25rem .5rem .25rem 0;
-      max-height: 1.3rem;
+      max-height: 1rem;
       padding: .25rem .5rem .25rem .5rem;
       transition: background-color .3s;
       white-space: nowrap;
@@ -162,9 +202,9 @@
       color: hsl(214, 17%, 92%);
       display: flex;
       justify-content: center;
-      height: 1.25rem;
+      height: 1rem;
       margin-left: .25rem;
-      min-width: 1.25rem;
+      min-width: 1rem;
     }
     .token-remove:hover, .remove-all:hover {
       background-color: hsl(215, 21%, 43%);
@@ -175,13 +215,13 @@
       align-items: center;
       display: flex;
       flex: 1;
-      min-width: 15rem;
+      min-width: 10rem;
     }
   
     input {
       border: none;
-      font-size: 1.5rem;
-      line-height: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1rem;
           margin: 0;
       outline: none;
           padding: 0;
@@ -244,40 +284,3 @@
     }
   </style>
   
-  <div class="multiselect" class:readonly>
-    <div class="tokens" class:showOptions on:click={handleTokenClick}>
-      {#each Object.values(selected) as s}
-        <div class="token" data-id="{s.value}">
-          <span>{s.name}</span>
-          {#if !readonly}
-            <div class="token-remove" title="Remove {s.name}">
-              <svg class="icon-clear" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                <path d="{iconClearPath}"/>
-              </svg>
-            </div>
-          {/if}
-        </div>
-      {/each}
-      <div class="actions">
-        {#if !readonly}
-          <input id={id} autocomplete="off" bind:value={inputValue} bind:this={input} on:keyup={handleKeyup} on:blur={handleBlur} placeholder={placeholder}/>
-          <div class="remove-all" title="Remove All" class:hidden={!Object.keys(selected).length}>
-            <svg class="icon-clear" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-              <path d="{iconClearPath}"/>
-            </svg>
-          </div>
-          <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M5 8l4 4 4-4z"></path></svg>
-        {/if}
-      </div>
-    </div>
-  
-    <select bind:this={slot} type="multiple" class="hidden"><slot></slot></select>
-    
-    {#if showOptions}
-      <ul class="options" transition:fly="{{duration: 200, y: 5}}" on:mousedown|preventDefault={handleOptionMousedown}>
-        {#each filtered as option}
-          <li class:selected={selected[option.value]} class:active={activeOption === option} data-value="{option.value}">{option.name}</li>
-        {/each}
-      </ul>
-    {/if}
-  </div>
